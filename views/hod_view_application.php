@@ -8,109 +8,784 @@ if ($_SESSION['role'] !== 'hod') {
     exit();
 }
 
-$app_id = $_GET['id'] ?? null;
-if (!$app_id) die("Invalid application ID.");
+$app_id = $_GET['application_id'] ?? null;
+$type = $_GET['type'] ?? 'form1'; // Default to form1 if not specified
 
-// Fetch main application details
-$stmt = $conn->prepare("SELECT * FROM cpda_applications WHERE application_id = ?");
-$stmt->bind_param("i", $app_id);
-$stmt->execute();
-$app = $stmt->get_result()->fetch_assoc();
+if (!$app_id) {
+    die("Invalid application ID.");
+}
 
-// Fetch professional memberships
-$stmt2 = $conn->prepare("SELECT * FROM professional_memberships WHERE application_id = ?");
-$stmt2->bind_param("i", $app_id);
-$stmt2->execute();
-$memberships = $stmt2->get_result();
-
-// Fetch consumable items
-$stmt3 = $conn->prepare("SELECT * FROM consumable_items WHERE application_id = ?");
-$stmt3->bind_param("i", $app_id);
-$stmt3->execute();
-$items = $stmt3->get_result();
+// Determine which form to load based on type
+if ($type === 'event') {
+    // CPDA Event Application
+    $stmt = $conn->prepare("SELECT * FROM cpda_event_applications WHERE application_id = ?");
+    $stmt->bind_param("i", $app_id);
+    $stmt->execute();
+    $app = $stmt->get_result()->fetch_assoc();
+    
+    if (!$app) {
+        die("Event application not found.");
+    }
+    
+    // Verify department access
+    if ($app['department'] !== $_SESSION['department']) {
+        die("Unauthorized access to this application.");
+    }
+    
+    // Fetch attachments for event application
+    $stmt2 = $conn->prepare("SELECT * FROM cpda_event_attachments WHERE application_id = ?");
+    $stmt2->bind_param("i", $app_id);
+    $stmt2->execute();
+    $attachments = $stmt2->get_result();
+    
+} elseif ($type === 'f4') {
+    // F-4 Reimbursement Application
+    $stmt = $conn->prepare("SELECT * FROM f4_reimbursement_applications WHERE application_id = ?");
+    $stmt->bind_param("i", $app_id);
+    $stmt->execute();
+    $app = $stmt->get_result()->fetch_assoc();
+    
+    if (!$app) {
+        die("F-4 reimbursement application not found.");
+    }
+    
+    // Verify department access
+    if ($app['department'] !== $_SESSION['department']) {
+        die("Unauthorized access to this application.");
+    }
+    
+    // Fetch professional memberships
+    $stmt2 = $conn->prepare("SELECT * FROM f4_professional_memberships WHERE application_id = ?");
+    $stmt2->bind_param("i", $app_id);
+    $stmt2->execute();
+    $memberships = $stmt2->get_result();
+    
+    // Fetch attachments
+    $stmt3 = $conn->prepare("SELECT * FROM f4_reimbursement_attachments WHERE application_id = ?");
+    $stmt3->bind_param("i", $app_id);
+    $stmt3->execute();
+    $attachments = $stmt3->get_result();
+    
+} elseif ($type === 'f5') {
+    // F-5 Conference Reimbursement Application
+    $stmt = $conn->prepare("SELECT * FROM f5_conference_reimbursements WHERE application_id = ?");
+    $stmt->bind_param("i", $app_id);
+    $stmt->execute();
+    $app = $stmt->get_result()->fetch_assoc();
+    
+    if (!$app) {
+        die("F-5 conference reimbursement application not found.");
+    }
+    
+    // Verify department access
+    if ($app['department'] !== $_SESSION['department']) {
+        die("Unauthorized access to this application.");
+    }
+    
+    // Fetch attachments
+    $stmt2 = $conn->prepare("SELECT * FROM f5_attachments WHERE reimbursement_id = ?");
+    $stmt2->bind_param("i", $app_id);
+    $stmt2->execute();
+    $attachments = $stmt2->get_result();
+    
+} else {
+    // CPDA Form 1 (Purchase/Membership)
+    $stmt = $conn->prepare("SELECT * FROM cpda_applications WHERE application_id = ?");
+    $stmt->bind_param("i", $app_id);
+    $stmt->execute();
+    $app = $stmt->get_result()->fetch_assoc();
+    
+    if (!$app) {
+        die("Application not found.");
+    }
+    
+    // Fetch professional memberships
+    $stmt2 = $conn->prepare("SELECT * FROM professional_memberships WHERE application_id = ?");
+    $stmt2->bind_param("i", $app_id);
+    $stmt2->execute();
+    $memberships = $stmt2->get_result();
+    
+    // Fetch consumable items
+    $stmt3 = $conn->prepare("SELECT * FROM consumable_items WHERE application_id = ?");
+    $stmt3->bind_param("i", $app_id);
+    $stmt3->execute();
+    $items = $stmt3->get_result();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOD Review Application</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        h2, h3 { color: #333; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 25px; }
-        table, th, td { border: 1px solid #ccc; }
-        th, td { padding: 8px; text-align: left; }
-        .section { background: #f7f7f7; padding: 10px; font-weight: bold; }
-        textarea { width: 100%; }
-        button { padding: 8px 15px; margin: 5px; cursor: pointer; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 { 
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        h3 { 
+            color: #555;
+            margin-top: 25px;
+            background: #e3f2fd;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-bottom: 25px; 
+            background: white;
+        }
+        table, th, td { 
+            border: 1px solid #ddd; 
+        }
+        th { 
+            background-color: #f0f0f0;
+            padding: 10px; 
+            text-align: left;
+            width: 250px;
+            font-weight: bold;
+        }
+        td { 
+            padding: 10px; 
+        }
+        .section-header { 
+            background: #007bff;
+            color: white;
+            padding: 12px; 
+            font-weight: bold;
+            font-size: 16px;
+        }
+        textarea { 
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+        }
+        .button-group {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button { 
+            padding: 12px 25px; 
+            margin: 5px; 
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+        .btn-approve:hover {
+            background: #218838;
+        }
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-reject:hover {
+            background: #c82333;
+        }
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+        .btn-back:hover {
+            background: #5a6268;
+        }
+        .expense-row {
+            background: #fffde7;
+        }
+        .total-row {
+            background: #fff3cd;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .attachment-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .attachment-link:hover {
+            text-decoration: underline;
+        }
+        .designation-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .badge-location {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-india {
+            background: #28a745;
+            color: white;
+        }
+        .badge-abroad {
+            background: #6f42c1;
+            color: white;
+        }
+        .expense-category {
+            background: #f0f8ff;
+            padding: 8px;
+            border-left: 3px solid #007bff;
+        }
     </style>
 </head>
 <body>
-    <h2>Application Review – HOD View</h2>
 
-    <div class="section">Applicant Details</div>
-    <table>
-        <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
-        <tr><th>Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
-        <tr><th>Email</th><td><?= htmlspecialchars($app['email']); ?></td></tr>
-        <tr><th>Mobile</th><td><?= htmlspecialchars($app['mobile_number']); ?></td></tr>
-        <tr><th>Designation</th><td><?= htmlspecialchars($app['designation']); ?></td></tr>
-        <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
-        <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
-        <tr><th>Date of Joining</th><td><?= htmlspecialchars($app['date_of_joining']); ?></td></tr>
-        <tr><th>PDA Block</th><td><?= htmlspecialchars($app['pda_block_start_year']); ?> – <?= htmlspecialchars($app['pda_block_end_year']); ?></td></tr>
-    </table>
+<div class="container">
+    <h2>
+        <?php 
+        if ($type === 'event') {
+            echo 'CPDA Event Application Review';
+        } elseif ($type === 'f4') {
+            echo 'F-4 Reimbursement Application Review';
+        } elseif ($type === 'f5') {
+            echo 'F-5 Conference/Workshop Reimbursement Application Review';
+        } else {
+            echo 'CPDA Form 1 Application Review';
+        }
+        ?> – HOD Approval
+    </h2>
+    
+    <p><a href="hod_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
 
-    <div class="section">Purchase Details</div>
-    <table>
-        <tr><th>Purpose of Purchase</th><td><?= nl2br(htmlspecialchars($app['purpose_of_purchase'])); ?></td></tr>
-        <tr><th>Technical Specification / Source</th><td><?= nl2br(htmlspecialchars($app['technical_specification'])); ?></td></tr>
-        <tr><th>Remarks</th><td><?= nl2br(htmlspecialchars($app['remarks'])); ?></td></tr>
-    </table>
+    <?php if ($type === 'f5'): ?>
+        <!-- F-5 CONFERENCE REIMBURSEMENT APPLICATION -->
+        
+        <!-- Faculty Details -->
+        <h3>Faculty Information</h3>
+        <table>
+            <tr><th>Reference Number</th><td><strong><?= htmlspecialchars($app['ref_number']); ?></strong></td></tr>
+            <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
+            <tr><th>Faculty Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
+            <tr><th>Designation</th><td><?= htmlspecialchars($app['designation']); ?></td></tr>
+            <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
+            <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
+            <tr><th>Submission Date</th><td><?= date('d-M-Y H:i', strtotime($app['created_at'])); ?></td></tr>
+        </table>
 
-    <div class="section">Professional Memberships</div>
-    <table>
-        <tr><th>Name of Professional Body</th><th>Amount</th><th>Type</th></tr>
-        <?php if ($memberships->num_rows > 0): ?>
-            <?php while ($row = $memberships->fetch_assoc()): ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['professional_body_name']); ?></td>
-                    <td><?= htmlspecialchars($row['amount']); ?></td>
-                    <td><?= htmlspecialchars($row['membership_type']); ?></td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr><td colspan="3">No memberships listed.</td></tr>
+        <!-- Activity Details -->
+        <h3>Activity Details</h3>
+        <table>
+            <tr><th>Activity Nature</th><td><span class="badge"><?= htmlspecialchars($app['activity_nature']); ?></span></td></tr>
+            <tr><th>Activity Name</th><td><?= htmlspecialchars($app['activity_name']); ?></td></tr>
+            <tr>
+                <th>Activity Dates</th>
+                <td>
+                    <strong>From:</strong> <?= date('d-M-Y', strtotime($app['activity_start_date'])); ?><br>
+                    <strong>To:</strong> <?= date('d-M-Y', strtotime($app['activity_end_date'])); ?><br>
+                    <strong>Duration:</strong> <?php
+                        $start = new DateTime($app['activity_start_date']);
+                        $end = new DateTime($app['activity_end_date']);
+                        $interval = $start->diff($end);
+                        echo ($interval->days + 1) . ' day(s)';
+                    ?>
+                </td>
+            </tr>
+            <tr><th>Venue</th><td><?= htmlspecialchars($app['activity_venue']); ?></td></tr>
+            <tr>
+                <th>Location Type</th>
+                <td>
+                    <span class="badge-location badge-<?= strtolower($app['location_type']); ?>">
+                        <?= htmlspecialchars($app['location_type']); ?>
+                    </span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Expenditure Details -->
+        <h3>Details of Expenditure</h3>
+        <table>
+            <tr class="section-header"><th>Expense Category</th><th>Amount (₹)</th></tr>
+            <tr class="expense-category">
+                <td>(a) Registration fee including transaction charges<br>
+                    <small style="color: #666;">अंतरण शुल्क सहित पंजीयन शुल्क</small>
+                </td>
+                <td>₹<?= number_format($app['expense_registration'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(b) Visa Fee (if applicable) and expenses for collection of visa<br>
+                    <small style="color: #666;">वीजा शुल्क (यदि लागू हो) व वीजा संग्रह हेतु व्यय</small>
+                </td>
+                <td>₹<?= number_format($app['expense_visa'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(c) Insurance fee (if applicable)<br>
+                    <small style="color: #666;">बीमा शुल्क (यदि लागू हो)</small>
+                </td>
+                <td>₹<?= number_format($app['expense_insurance'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(d) TA (Air Fare)<br>
+                    <small style="color: #666;">टीए (विमान/हवाई यात्रा)</small>
+                </td>
+                <td>₹<?= number_format($app['expense_air_fare'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(e) TA (Local Travel)<br>
+                    <small style="color: #666;">टीए (स्थानीय यात्रा)</small>
+                </td>
+                <td>₹<?= number_format($app['expense_local_travel'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(f) DA per diem<br>
+                    <small style="color: #666;">अवधि के लिए डीए/प्रतिदिन</small>
+                </td>
+                <td>₹<?= number_format($app['expense_da_per_diem'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(g) Boarding & Lodging<br>
+                    <small style="color: #666;">भोजन व आवास</small>
+                </td>
+                <td>₹<?= number_format($app['expense_boarding_lodging'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(h) Any Other expenses<br>
+                    <small style="color: #666;">कोई अन्य व्यय</small>
+                    <?php if (!empty($app['expense_other_description'])): ?>
+                        <br><small style="color: #007bff;"><strong>Description:</strong> <?= htmlspecialchars($app['expense_other_description']); ?></small>
+                    <?php endif; ?>
+                </td>
+                <td>₹<?= number_format($app['expense_other'], 2); ?></td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>TOTAL AMOUNT (कुल - a to h)</strong></td>
+                <td><strong>₹<?= number_format($app['total_amount'], 2); ?></strong></td>
+            </tr>
+        </table>
+
+        <!-- Remarks -->
+        <?php if (!empty($app['remarks'])): ?>
+        <h3>Remarks / टिप्पणी</h3>
+        <table>
+            <tr>
+                <td><?= nl2br(htmlspecialchars($app['remarks'])); ?></td>
+            </tr>
+        </table>
         <?php endif; ?>
-    </table>
 
-    <div class="section">Consumable / Item Details</div>
-    <table>
-        <tr><th>Serial No.</th><th>Article Name</th><th>Amount</th><th>Category</th></tr>
-        <?php if ($items->num_rows > 0): ?>
-            <?php while ($row = $items->fetch_assoc()): ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['serial_number']); ?></td>
-                    <td><?= htmlspecialchars($row['article_name']); ?></td>
-                    <td><?= htmlspecialchars($row['amount']); ?></td>
-                    <td><?= htmlspecialchars($row['item_category']); ?></td>
+        <!-- Attachments -->
+        <h3>Supporting Documents</h3>
+        <table>
+            <tr class="section-header"><th>Document Type</th><th>File Name</th><th>Description</th><th>Size</th></tr>
+            <?php if ($attachments->num_rows > 0): ?>
+                <?php while ($attach = $attachments->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($attach['attachment_type']); ?></td>
+                        <td>
+                            <a href="<?= htmlspecialchars($attach['file_path']); ?>" 
+                               target="_blank" class="attachment-link">
+                                📎 <?= htmlspecialchars($attach['file_name']); ?>
+                            </a>
+                        </td>
+                        <td><?= htmlspecialchars($attach['description'] ?? 'N/A'); ?></td>
+                        <td><?= round($attach['file_size'] / 1024, 2); ?> KB</td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="4"><em>No attachments uploaded</em></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <!-- HOD Action for F-5 Form -->
+        <div class="button-group">
+            <h3 style="margin-top: 0;">HOD Recommendation / Action</h3>
+            <form action="../controllers/HODF4Controller.php" method="POST">
+                <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
+                
+                <label><strong>HOD Comments / Remarks:</strong></label><br>
+                <textarea name="hod_remarks" rows="5" required placeholder="Enter your comments or recommendations here..."></textarea>
+                <br><br>
+                
+                <button type="submit" name="action" value="approve" class="btn-approve">
+                    ✅ APPROVE & RECOMMEND
+                </button>
+                
+                <button type="submit" name="action" value="reject" class="btn-reject">
+                    ❌ REJECT APPLICATION
+                </button>
+            </form>
+        </div>
+
+    <?php elseif ($type === 'f4'): ?>
+        <!-- F-4 REIMBURSEMENT APPLICATION (Keep existing code) -->
+        
+        <!-- Faculty Details -->
+        <h3>Faculty Information</h3>
+        <table>
+            <tr><th>Application Number</th><td><strong><?= htmlspecialchars($app['ref_number']); ?></strong></td></tr>
+            <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
+            <tr><th>Faculty Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
+            <tr>
+                <th>Designation</th>
+                <td>
+                    <div class="designation-badges">
+                        <?php if ($app['designation_hag']): ?><span class="badge">Professor (HAG)</span><?php endif; ?>
+                        <?php if ($app['designation_professor']): ?><span class="badge">Professor</span><?php endif; ?>
+                        <?php if ($app['designation_associate_professor']): ?><span class="badge">Associate Professor</span><?php endif; ?>
+                        <?php if ($app['designation_assistant_professor']): ?><span class="badge">Assistant Professor</span><?php endif; ?>
+                    </div>
+                </td>
+            </tr>
+            <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
+            <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
+            <tr><th>Submission Date</th><td><?= date('d-M-Y', strtotime($app['submission_date'])); ?></td></tr>
+        </table>
+
+        <!-- Professional Memberships -->
+        <h3>Professional Membership Details</h3>
+        <table>
+            <tr class="section-header"><th>Professional Body Name</th><th>Amount (₹)</th><th>Type</th></tr>
+            <?php if ($memberships->num_rows > 0): ?>
+                <?php 
+                $membership_total = 0;
+                while ($row = $memberships->fetch_assoc()): 
+                    $membership_total += $row['membership_amount'];
+                ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['professional_body_name']); ?></td>
+                        <td>₹<?= number_format($row['membership_amount'], 2); ?></td>
+                        <td><?= htmlspecialchars($row['membership_type']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+                <tr class="total-row">
+                    <td colspan="2" style="text-align: right;"><strong>Membership Total:</strong></td>
+                    <td><strong>₹<?= number_format($membership_total, 2); ?></strong></td>
                 </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr><td colspan="4">No consumable items listed.</td></tr>
+            <?php else: ?>
+                <tr><td colspan="3"><em>No professional memberships listed.</em></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <!-- Expense Details -->
+        <h3>Details of Expenses</h3>
+        <table>
+            <tr class="section-header"><th>Expense Category</th><th>Amount (₹)</th></tr>
+            <tr class="expense-category">
+                <td>(a) Books - पुस्तकें</td>
+                <td>₹<?= number_format($app['expense_books'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(b) Stationary Items - स्टेशनरी सामग्री</td>
+                <td>₹<?= number_format($app['expense_stationary'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(c) Patent - पेटेंट</td>
+                <td>₹<?= number_format($app['expense_patent'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(d) Computer Consumables (External Storage, Cartridges)</td>
+                <td>₹<?= number_format($app['expense_computer_consumables'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(e) Consumables (Chemicals, Laboratory Glassware)</td>
+                <td>₹<?= number_format($app['expense_consumables'], 2); ?></td>
+            </tr>
+            <tr class="expense-category">
+                <td>(f) Charges for Synthesis & Analysis of Samples</td>
+                <td>₹<?= number_format($app['expense_synthesis_analysis'], 2); ?></td>
+            </tr>
+            <tr class="total-row">
+                <td><strong>TOTAL AMOUNT</strong></td>
+                <td><strong>₹<?= number_format($app['total_amount'], 2); ?></strong></td>
+            </tr>
+        </table>
+
+        <!-- Remarks -->
+        <?php if (!empty($app['remarks'])): ?>
+        <h3>Remarks</h3>
+        <table>
+            <tr>
+                <td><?= nl2br(htmlspecialchars($app['remarks'])); ?></td>
+            </tr>
+        </table>
         <?php endif; ?>
-    </table>
 
-    <div class="section">HOD Recommendation</div>
-    <form action="../controllers/HODController.php" method="POST">
-        <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
-        <label>Comments:</label><br>
-        <textarea name="comments" rows="4"></textarea><br><br>
-        <button type="submit" name="action" value="recommend">✅ Recommend</button>
-        <button type="submit" name="action" value="not_recommend">❌ Not Recommend</button>
-    </form>
+        <!-- Attachments -->
+        <h3>Supporting Documents</h3>
+        <table>
+            <tr class="section-header"><th>Document Type</th><th>File Name</th><th>Description</th><th>Size</th></tr>
+            <?php if ($attachments->num_rows > 0): ?>
+                <?php while ($attach = $attachments->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($attach['attachment_type']); ?></td>
+                        <td>
+                            <a href="<?= htmlspecialchars($attach['file_path']); ?>" 
+                               target="_blank" class="attachment-link">
+                                📎 <?= htmlspecialchars($attach['file_name']); ?>
+                            </a>
+                        </td>
+                        <td><?= htmlspecialchars($attach['description'] ?? 'N/A'); ?></td>
+                        <td><?= round($attach['file_size'] / 1024, 2); ?> KB</td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="4"><em>No attachments uploaded</em></td></tr>
+            <?php endif; ?>
+        </table>
 
-    <p><a href="hod_dashboard.php">⬅ Back to Dashboard</a></p>
+        <!-- HOD Action for F-4 Form -->
+        <div class="button-group">
+            <h3 style="margin-top: 0;">HOD Recommendation / Action</h3>
+            <form action="../controllers/HODF3Controller.php" method="POST">
+                <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
+                
+                <label><strong>HOD Comments / Remarks:</strong></label><br>
+                <textarea name="hod_remarks" rows="5" required placeholder="Enter your comments or recommendations here..."></textarea>
+                <br><br>
+                
+                <button type="submit" name="action" value="approve" class="btn-approve">
+                    ✅ APPROVE & RECOMMEND
+                </button>
+                
+                <button type="submit" name="action" value="reject" class="btn-reject">
+                    ❌ REJECT APPLICATION
+                </button>
+            </form>
+        </div>
+
+    <?php elseif ($type === 'event'): ?>
+        <!-- EVENT APPLICATION FORM (Keep existing code) -->
+        
+        <!-- Applicant Details -->
+        <h3>Section 1-6: Faculty Details</h3>
+        <table>
+            <tr><th>Application Number</th><td><strong><?= htmlspecialchars($app['ref_number']); ?></strong></td></tr>
+            <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
+            <tr><th>Faculty Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
+            <tr>
+                <th>Designation</th>
+                <td>
+                    <div class="designation-badges">
+                        <?php if ($app['designation_hag']): ?><span class="badge">Professor (HAG)</span><?php endif; ?>
+                        <?php if ($app['designation_professor']): ?><span class="badge">Professor</span><?php endif; ?>
+                        <?php if ($app['designation_associate_professor']): ?><span class="badge">Associate Professor</span><?php endif; ?>
+                        <?php if ($app['designation_assistant_professor']): ?><span class="badge">Assistant Professor</span><?php endif; ?>
+                    </div>
+                </td>
+            </tr>
+            <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
+            <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
+            <tr><th>Date of Joining</th><td><?= date('d-M-Y', strtotime($app['date_of_joining'])); ?></td></tr>
+        </table>
+
+        <!-- Event Details -->
+        <h3>Section 7-11: Event Details</h3>
+        <table>
+            <tr><th>Nature of Event</th><td><?= htmlspecialchars($app['nature_of_event']); ?></td></tr>
+            <tr><th>Title of Event</th><td><?= htmlspecialchars($app['title_of_event']); ?></td></tr>
+            <tr><th>Period of Event</th><td><?= htmlspecialchars($app['period_of_event']); ?></td></tr>
+            <tr><th>Working Days Involved</th><td><?= htmlspecialchars($app['working_days_involved']); ?> days</td></tr>
+            <tr><th>Venue of Event</th><td><?= htmlspecialchars($app['venue_of_event']); ?></td></tr>
+        </table>
+
+        <!-- Paper Details -->
+        <h3>Section 12: Paper Details</h3>
+        <table>
+            <tr><th>Paper Title</th><td><?= $app['paper_title'] ? htmlspecialchars($app['paper_title']) : '<em>Not provided</em>'; ?></td></tr>
+            <tr><th>Authors</th><td><?= $app['paper_authors'] ? nl2br(htmlspecialchars($app['paper_authors'])) : '<em>Not provided</em>'; ?></td></tr>
+            <tr><th>No Objection Details</th><td><?= $app['no_objection_details'] ? nl2br(htmlspecialchars($app['no_objection_details'])) : '<em>Not provided</em>'; ?></td></tr>
+        </table>
+
+        <!-- Expense Details -->
+        <h3>Section 13: Details of Expenses</h3>
+        <table>
+            <tr class="section-header"><th colspan="2">Expense Breakdown</th></tr>
+            <tr class="expense-row"><th>a) Registration Fee (including transaction charges)</th><td>₹<?= number_format($app['expense_registration_fee'], 2); ?></td></tr>
+            <tr class="expense-row"><th>b) Visa Fee (if applicable) and collection expenses</th><td>₹<?= number_format($app['expense_visa_fee'], 2); ?></td></tr>
+            <tr class="expense-row"><th>c) Insurance Fee (if applicable)</th><td>₹<?= number_format($app['expense_insurance_fee'], 2); ?></td></tr>
+            <tr class="expense-row"><th>d) TA (Air Fare)</th><td>₹<?= number_format($app['expense_air_fare'], 2); ?></td></tr>
+            <tr class="expense-row"><th>e) TA (Local Travel)</th><td>₹<?= number_format($app['expense_local_travel'], 2); ?></td></tr>
+            <tr class="expense-row"><th>f) DA per diem</th><td>₹<?= number_format($app['expense_da_per_diem'], 2); ?></td></tr>
+            <tr class="expense-row"><th>g) Boarding & Lodging as per entitlement</th><td>₹<?= number_format($app['expense_boarding_lodging'], 2); ?></td></tr>
+            <tr class="expense-row">
+                <th>h) Other Expenses</th>
+                <td>
+                    ₹<?= number_format($app['expense_other_amount'], 2); ?>
+                    <?php if ($app['expense_other_details']): ?>
+                        <br><small><em><?= nl2br(htmlspecialchars($app['expense_other_details'])); ?></em></small>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <tr class="total-row"><th>TOTAL (a to h)</th><td>₹<?= number_format($app['expense_total'], 2); ?></td></tr>
+        </table>
+
+        <!-- Holiday Period -->
+        <h3>Section 14: Event During Holidays/Vacations</h3>
+        <table>
+            <tr>
+                <th>Does event fall during holidays?</th>
+                <td><?= htmlspecialchars($app['event_during_holidays']); ?></td>
+            </tr>
+        </table>
+
+        <!-- Previous Abroad Participation -->
+        <h3>Section 15: Previous Abroad Participation (Current CPDA Block)</h3>
+        <table>
+            <tr>
+                <th>Attended programme abroad in current block?</th>
+                <td><?= htmlspecialchars($app['attended_abroad_current_block']); ?></td>
+            </tr>
+            <?php if ($app['attended_abroad_current_block'] === 'YES'): ?>
+                <tr><th>Previous Event Name(s)</th><td><?= nl2br(htmlspecialchars($app['previous_event_name'])); ?></td></tr>
+                <tr><th>Previous Event Date(s)</th><td><?= htmlspecialchars($app['previous_event_dates']); ?></td></tr>
+                <tr><th>Previous Event Venue(s)</th><td><?= htmlspecialchars($app['previous_event_venues']); ?></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <!-- Attachments -->
+        <h3>Attachments</h3>
+        <table>
+            <tr class="section-header"><th>Attachment Type</th><th>File</th></tr>
+            <?php if ($attachments->num_rows > 0): ?>
+                <?php while ($attach = $attachments->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($attach['attachment_type']); ?></td>
+                        <td>
+                            <a href="../uploads/cpda_events/<?= htmlspecialchars($attach['file_path']); ?>" 
+                               target="_blank" class="attachment-link">
+                                📎 <?= htmlspecialchars($attach['file_name']); ?>
+                            </a>
+                            <small>(<?= round($attach['file_size'] / 1024, 2); ?> KB)</small>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="2"><em>No attachments uploaded</em></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <!-- HOD Action for Event Form -->
+        <div class="button-group">
+            <h3 style="margin-top: 0;">HOD Recommendation / Action</h3>
+            <form action="../controllers/HODEventController.php" method="POST">
+                <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
+                
+                <label><strong>HOD Comments / Remarks:</strong></label><br>
+                <textarea name="hod_remarks" rows="5" required placeholder="Enter your comments or recommendations here..."></textarea>
+                <br><br>
+                
+                <button type="submit" name="action" value="approve" class="btn-approve">
+                    ✅ APPROVE & RECOMMEND
+                </button>
+                
+                <button type="submit" name="action" value="reject" class="btn-reject">
+                    ❌ REJECT APPLICATION
+                </button>
+            </form>
+        </div>
+
+    <?php else: ?>
+        <!-- FORM 1 APPLICATION (Purchase/Membership) - Keep existing code -->
+        
+        <h3>Applicant Details</h3>
+        <table>
+            <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
+            <tr><th>Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
+            <tr><th>Email</th><td><?= htmlspecialchars($app['email']); ?></td></tr>
+            <tr><th>Mobile</th><td><?= htmlspecialchars($app['mobile_number']); ?></td></tr>
+            <tr><th>Designation</th><td><?= htmlspecialchars($app['designation']); ?></td></tr>
+            <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
+            <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
+            <tr><th>Date of Joining</th><td><?= htmlspecialchars($app['date_of_joining']); ?></td></tr>
+            <tr><th>PDA Block</th><td><?= htmlspecialchars($app['pda_block_start_year']); ?> – <?= htmlspecialchars($app['pda_block_end_year']); ?></td></tr>
+        </table>
+
+        <h3>Purchase Details</h3>
+        <table>
+            <tr><th>Purpose of Purchase</th><td><?= nl2br(htmlspecialchars($app['purpose_of_purchase'])); ?></td></tr>
+            <tr><th>Technical Specification / Source</th><td><?= nl2br(htmlspecialchars($app['technical_specification'])); ?></td></tr>
+            <tr><th>Remarks</th><td><?= nl2br(htmlspecialchars($app['remarks'])); ?></td></tr>
+        </table>
+
+        <h3>Professional Memberships</h3>
+        <table>
+            <tr class="section-header"><th>Name of Professional Body</th><th>Amount</th><th>Type</th></tr>
+            <?php if ($memberships->num_rows > 0): ?>
+                <?php while ($row = $memberships->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['professional_body_name']); ?></td>
+                        <td>₹<?= number_format($row['amount'], 2); ?></td>
+                        <td><?= htmlspecialchars($row['membership_type']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="3"><em>No memberships listed.</em></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <h3>Consumable / Item Details</h3>
+        <table>
+            <tr class="section-header"><th>Serial No.</th><th>Article Name</th><th>Amount</th><th>Category</th></tr>
+            <?php if ($items->num_rows > 0): ?>
+                <?php while ($row = $items->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['serial_number']); ?></td>
+                        <td><?= htmlspecialchars($row['article_name']); ?></td>
+                        <td>₹<?= number_format($row['amount'], 2); ?></td>
+                        <td><?= htmlspecialchars($row['item_category']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr><td colspan="4"><em>No consumable items listed.</em></td></tr>
+            <?php endif; ?>
+        </table>
+
+        <!-- HOD Action for Form 1 -->
+        <div class="button-group">
+            <h3 style="margin-top: 0;">HOD Recommendation</h3>
+            <form action="../controllers/HODController.php" method="POST">
+                <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
+                
+                <label><strong>Comments:</strong></label><br>
+                <textarea name="comments" rows="5" required placeholder="Enter your comments here..."></textarea>
+                <br><br>
+                
+                <button type="submit" name="action" value="recommend" class="btn-approve">✅ Recommend</button>
+                <button type="submit" name="action" value="not_recommend" class="btn-reject">❌ Not Recommend</button>
+            </form>
+        </div>
+
+    <?php endif; ?>
+
+    <p><a href="hod_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
+</div>
+
 </body>
 </html>
