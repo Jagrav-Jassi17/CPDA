@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 07:48 AM
+-- Generation Time: Nov 10, 2025 at 01:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -88,7 +88,12 @@ INSERT INTO `approval_workflow` (`workflow_id`, `application_id`, `approver_role
 (6, 23, 'DEALING_ASSISTANT', 'Ms. Juhi Saini', 'BALANCE_CONFIRMED', 'Expenditure data saved by DA and forwarded to Superintendent', '2025-10-30 00:20:16', 0, '2025-10-29 18:50:16'),
 (7, 4, 'DEALING_ASSISTANT', 'Ms. Juhi Saini', 'BALANCE_CONFIRMED', 'Expenditure data saved by DA and forwarded to Superintendent', '2025-10-30 00:21:15', 0, '2025-10-29 18:51:15'),
 (8, 6, 'HOD', 'Prof. Alok Jain', '', '', '2025-10-30 10:13:48', 0, '2025-10-30 04:43:48'),
-(9, 9, 'HOD', 'Prof. Alok Jain', '', '', '2025-10-31 11:47:08', 0, '2025-10-31 06:17:08');
+(9, 9, 'HOD', 'Prof. Alok Jain', '', '', '2025-10-31 11:47:08', 0, '2025-10-31 06:17:08'),
+(10, 3, 'HOD', 'Prof. Alok Jain', '', 'sd', '2025-10-31 18:42:21', 0, '2025-10-31 13:12:21'),
+(11, 2, 'HOD', 'Prof. Alok Jain', '', 'jk', '2025-10-31 19:42:31', 0, '2025-10-31 14:12:31'),
+(12, 5, 'HOD', 'Prof. Alok Jain', '', 'sd', '2025-10-31 23:11:45', 0, '2025-10-31 17:41:45'),
+(13, 5, 'HOD', 'Prof. Alok Jain', '', 'xsd', '2025-10-31 23:11:56', 0, '2025-10-31 17:41:56'),
+(14, 5, 'HOD', 'Prof. Alok Jain', '', 'dsf', '2025-10-31 23:12:01', 0, '2025-10-31 17:42:01');
 
 -- --------------------------------------------------------
 
@@ -199,17 +204,118 @@ CREATE TABLE `cpda_applications` (
 
 INSERT INTO `cpda_applications` (`application_id`, `ref_number`, `dated`, `employee_code`, `faculty_name`, `email`, `mobile_number`, `designation`, `department`, `pay_level`, `date_of_joining`, `purpose_of_purchase`, `technical_specification`, `source_of_information`, `remarks`, `applicant_signature_date`, `status`, `current_stage`, `pda_block_start_year`, `pda_block_end_year`, `created_at`, `updated_at`) VALUES
 (1, 'CPDA-6900C6ED21BE6', '2025-10-28', '1105', 'Dr. Aman Singh', 'aman.singh@nitj.ac.in', '7696124875', 'faculty', 'Mechanical Engineering', '13', '2025-10-22', 'trip', 'i9', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-28 13:36:45', '2025-10-28 13:36:45'),
-(2, 'CPDA-6900CAB0C4730', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sdaljkf', 'sf', NULL, 'skldf', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-28 13:52:48', '2025-10-28 13:52:48'),
-(3, 'CPDA-6900CCF539F1A', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sdfsdf', 'fsd', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-28 14:02:29', '2025-10-28 14:02:29'),
-(4, 'CPDA-6900CD6DE78B4', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'asd', 'asd', NULL, 'we', NULL, 'ACCOUNTS_REVIEW', 'ACCOUNTS_SUPDT_REVIEW', NULL, NULL, '2025-10-28 14:04:29', '2025-10-29 18:51:15'),
-(5, 'CPDA-6901CF0C2D694', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'm', ' n', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-29 08:23:40', '2025-10-29 08:23:40'),
-(6, 'CPDA-6901CFA87EE48', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'zasf', 'er', NULL, 'g', NULL, 'HOD_APPROVED', 'ACCOUNTS_REVIEW', NULL, NULL, '2025-10-29 08:26:16', '2025-10-30 04:43:48'),
+(2, 'CPDA-6900CAB0C4730', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sdaljkf', 'sf', NULL, 'skldf', NULL, 'HOD_REJECTED', 'COMPLETED', NULL, NULL, '2025-10-28 13:52:48', '2025-10-31 14:12:31'),
+(3, 'CPDA-6900CCF539F1A', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sdfsdf', 'fsd', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-28 14:02:29', '2025-10-31 13:31:14'),
+(4, 'CPDA-6900CD6DE78B4', '2025-10-28', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'asd', 'asd', NULL, 'we', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-28 14:04:29', '2025-10-31 13:35:09'),
+(5, 'CPDA-6901CF0C2D694', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'm', ' n', NULL, '', NULL, 'HOD_REJECTED', 'COMPLETED', NULL, NULL, '2025-10-29 08:23:40', '2025-10-31 17:42:01'),
+(6, 'CPDA-6901CFA87EE48', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'zasf', 'er', NULL, 'g', '0000-00-00 00:00:00', 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-29 08:26:16', '2025-10-31 13:35:09'),
 (7, 'CPDA-6901D0523648A', '2025-10-29', '1105', 'Dr. Aman Singh', 'aman.singh@nitj.ac.in', '987654325', 'faculty', 'Mechanical Engineering', '13A2', '2012-09-01', 'a', 'a', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-29 08:29:06', '2025-10-29 08:29:06'),
 (8, 'CPDA-6901D3F80E738', '2025-10-29', '1105', 'Dr. Aman Singh', 'aman.singh@nitj.ac.in', '987654325', 'faculty', 'Mechanical Engineering', '13A2', '2012-09-01', 'as', 's', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-29 08:44:40', '2025-10-29 08:44:40'),
-(9, 'CPDA-6901D4F6AE3FF', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'a', 'q', NULL, '', NULL, 'HOD_APPROVED', 'ACCOUNTS_REVIEW', NULL, NULL, '2025-10-29 08:48:54', '2025-10-31 06:17:08'),
-(17, 'CPDA-6901D7B87F2F5', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sd', 's', NULL, '', NULL, 'HOD_REJECTED', 'COMPLETED', NULL, NULL, '2025-10-29 09:00:40', '2025-10-29 09:35:40'),
-(23, 'CPDA-6901DF60AFD7C', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'saa', 'a', NULL, '', NULL, 'ACCOUNTS_REVIEW', 'ACCOUNTS_SUPDT_REVIEW', NULL, NULL, '2025-10-29 09:33:20', '2025-10-29 19:15:28'),
-(24, 'CPDA-6901DF9B34794', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'jhhj', 'bb\r\n', NULL, '', NULL, 'ACCOUNTS_REVIEW', 'ACCOUNTS_SUPDT_REVIEW', NULL, NULL, '2025-10-29 09:34:19', '2025-10-29 18:48:42');
+(9, 'CPDA-6901D4F6AE3FF', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'a', 'q', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-29 08:48:54', '2025-10-31 13:32:50'),
+(17, 'CPDA-6901D7B87F2F5', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'sd', 's', NULL, '', NULL, 'HOD_REJECTED', 'COMPLETED', NULL, NULL, '2025-10-29 09:00:40', '2025-10-31 13:32:50'),
+(23, 'CPDA-6901DF60AFD7C', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'saa', 'a', NULL, '', NULL, 'ACCOUNTS_REVIEW', 'ACCOUNTS_SUPDT_REVIEW', NULL, NULL, '2025-10-29 09:33:20', '2025-10-31 13:32:50'),
+(24, 'CPDA-6901DF9B34794', '2025-10-29', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'jhhj', 'bb\r\n', NULL, '', NULL, 'ACCOUNTS_REVIEW', 'ACCOUNTS_SUPDT_REVIEW', NULL, NULL, '2025-10-29 09:34:19', '2025-10-29 18:48:42'),
+(25, 'CPDA-6904F2D295F91', '2025-10-31', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'a', '', NULL, '', NULL, 'SUBMITTED', 'HOD_REVIEW', NULL, NULL, '2025-10-31 17:33:06', '2025-10-31 17:33:06');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cpda_event_applications`
+--
+
+CREATE TABLE `cpda_event_applications` (
+  `application_id` int(11) NOT NULL,
+  `ref_number` varchar(50) NOT NULL,
+  `employee_code` int(11) NOT NULL,
+  `faculty_name` varchar(255) NOT NULL,
+  `designation_hag` tinyint(1) DEFAULT 0,
+  `designation_professor` tinyint(1) DEFAULT 0,
+  `designation_associate_professor` tinyint(1) DEFAULT 0,
+  `designation_assistant_professor` tinyint(1) DEFAULT 0,
+  `pay_level` varchar(20) NOT NULL,
+  `department` varchar(255) NOT NULL,
+  `date_of_joining` date NOT NULL,
+  `nature_of_event` varchar(255) NOT NULL,
+  `title_of_event` text NOT NULL,
+  `period_of_event` varchar(255) NOT NULL,
+  `working_days_involved` int(11) NOT NULL,
+  `venue_of_event` text NOT NULL,
+  `paper_title` text DEFAULT NULL,
+  `paper_authors` text DEFAULT NULL,
+  `no_objection_details` text DEFAULT NULL,
+  `abstract_attachment` varchar(255) DEFAULT NULL,
+  `expense_registration_fee` decimal(10,2) DEFAULT 0.00,
+  `expense_visa_fee` decimal(10,2) DEFAULT 0.00,
+  `expense_insurance_fee` decimal(10,2) DEFAULT 0.00,
+  `expense_air_fare` decimal(10,2) DEFAULT 0.00,
+  `expense_local_travel` decimal(10,2) DEFAULT 0.00,
+  `expense_da_per_diem` decimal(10,2) DEFAULT 0.00,
+  `expense_boarding_lodging` decimal(10,2) DEFAULT 0.00,
+  `expense_other_details` text DEFAULT NULL,
+  `expense_other_amount` decimal(10,2) DEFAULT 0.00,
+  `expense_total` decimal(10,2) DEFAULT 0.00,
+  `event_during_holidays` enum('YES','NO') NOT NULL,
+  `institute_arrangement_attachment` varchar(255) DEFAULT NULL,
+  `attended_abroad_current_block` enum('YES','NO') NOT NULL,
+  `previous_event_name` text DEFAULT NULL,
+  `previous_event_dates` varchar(255) DEFAULT NULL,
+  `previous_event_venues` text DEFAULT NULL,
+  `application_status` enum('DRAFT','SUBMITTED','UNDER_REVIEW','HOD_APPROVED','HOD_REJECTED','DEAN_APPROVED','DEAN_REJECTED','FINAL_APPROVED','FINAL_REJECTED') DEFAULT 'DRAFT',
+  `submission_date` datetime DEFAULT NULL,
+  `last_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `hod_approval_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `hod_approval_date` datetime DEFAULT NULL,
+  `hod_remarks` text DEFAULT NULL,
+  `hod_approved_by` varchar(50) DEFAULT NULL,
+  `dean_approval_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `dean_approval_date` datetime DEFAULT NULL,
+  `dean_remarks` text DEFAULT NULL,
+  `dean_approved_by` varchar(50) DEFAULT NULL,
+  `final_approval_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `final_approval_date` datetime DEFAULT NULL,
+  `final_remarks` text DEFAULT NULL,
+  `final_approved_by` varchar(50) DEFAULT NULL,
+  `sanctioned_amount` decimal(10,2) DEFAULT NULL,
+  `disbursement_status` enum('PENDING','PARTIAL','COMPLETED') DEFAULT 'PENDING',
+  `disbursed_amount` decimal(10,2) DEFAULT 0.00,
+  `disbursement_date` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `cpda_event_applications`
+--
+
+INSERT INTO `cpda_event_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `date_of_joining`, `nature_of_event`, `title_of_event`, `period_of_event`, `working_days_involved`, `venue_of_event`, `paper_title`, `paper_authors`, `no_objection_details`, `abstract_attachment`, `expense_registration_fee`, `expense_visa_fee`, `expense_insurance_fee`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other_details`, `expense_other_amount`, `expense_total`, `event_during_holidays`, `institute_arrangement_attachment`, `attended_abroad_current_block`, `previous_event_name`, `previous_event_dates`, `previous_event_venues`, `application_status`, `submission_date`, `last_updated`, `hod_approval_status`, `hod_approval_date`, `hod_remarks`, `hod_approved_by`, `dean_approval_status`, `dean_approval_date`, `dean_remarks`, `dean_approved_by`, `final_approval_status`, `final_approval_date`, `final_remarks`, `final_approved_by`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`) VALUES
+(1, 'CPDA-EVT-25-000001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', '2012-09-01', 'd', 'f', '34', 3, 'f', '', '', '', NULL, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, 'YES', NULL, 'NO', '', '', '', 'HOD_APPROVED', '2025-10-31 18:06:48', '2025-10-31 19:42:39', 'APPROVED', '2025-10-31 19:42:39', 'j', '1110', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 12:36:48', '2025-10-31 14:12:39'),
+(2, 'CPDA-EVT-25-000002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', '2012-09-01', 'harry', 'sik', 'js', 98, 'jk', 'sss', 's', 'ss', 'CPDA-EVT-25-000002_abstract_1761914346.pdf', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 6767676.00, 6767676.00, 'NO', 'CPDA-EVT-25-000002_arrangement_1761914346.pdf', 'YES', 'z', '1u', 'bat', 'SUBMITTED', '2025-10-31 18:09:06', '2025-10-31 18:09:06', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 12:39:06', '2025-10-31 12:39:06');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cpda_event_attachments`
+--
+
+CREATE TABLE `cpda_event_attachments` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `attachment_type` enum('ABSTRACT','INSTITUTE_ARRANGEMENT','NO_OBJECTION_CERTIFICATE','ACCEPTANCE_LETTER','OTHER') NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(500) NOT NULL,
+  `file_size` int(11) DEFAULT NULL,
+  `file_type` varchar(100) DEFAULT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `uploaded_by` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `cpda_event_attachments`
+--
+
+INSERT INTO `cpda_event_attachments` (`id`, `application_id`, `attachment_type`, `file_name`, `file_path`, `file_size`, `file_type`, `uploaded_at`, `uploaded_by`) VALUES
+(1, 2, 'ABSTRACT', 'F-2.pdf', 'CPDA-EVT-25-000002_abstract_1761914346.pdf', 444303, 'application/pdf', '2025-10-31 12:39:06', '1101'),
+(2, 2, 'INSTITUTE_ARRANGEMENT', 'F-4.pdf', 'CPDA-EVT-25-000002_arrangement_1761914346.pdf', 229514, 'application/pdf', '2025-10-31 12:39:06', '1101');
 
 -- --------------------------------------------------------
 
@@ -228,6 +334,189 @@ CREATE TABLE `cpda_register_entries` (
   `private_secretary_signature` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `f4_professional_memberships`
+--
+
+CREATE TABLE `f4_professional_memberships` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `professional_body_name` varchar(255) NOT NULL,
+  `membership_amount` decimal(10,2) NOT NULL,
+  `membership_type` enum('NATIONAL','INTERNATIONAL') NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `f4_professional_memberships`
+--
+
+INSERT INTO `f4_professional_memberships` (`id`, `application_id`, `professional_body_name`, `membership_amount`, `membership_type`, `created_at`) VALUES
+(1, 1, 'd', 34.00, 'NATIONAL', '2025-10-31 17:18:37'),
+(2, 1, 'dsf', 324.00, 'INTERNATIONAL', '2025-10-31 17:18:37'),
+(3, 2, 'dfsssss', 1111.00, 'NATIONAL', '2025-10-31 17:21:45'),
+(4, 4, 'da', 33.00, 'INTERNATIONAL', '2025-10-31 17:22:49');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `f4_reimbursement_applications`
+--
+
+CREATE TABLE `f4_reimbursement_applications` (
+  `application_id` int(11) NOT NULL,
+  `ref_number` varchar(50) NOT NULL,
+  `employee_code` int(11) NOT NULL,
+  `faculty_name` varchar(255) NOT NULL,
+  `designation_hag` tinyint(1) DEFAULT 0,
+  `designation_professor` tinyint(1) DEFAULT 0,
+  `designation_associate_professor` tinyint(1) DEFAULT 0,
+  `designation_assistant_professor` tinyint(1) DEFAULT 0,
+  `pay_level` varchar(20) NOT NULL,
+  `department` varchar(255) NOT NULL,
+  `total_amount` decimal(10,2) DEFAULT 0.00,
+  `expense_books` decimal(10,2) DEFAULT 0.00,
+  `expense_stationary` decimal(10,2) DEFAULT 0.00,
+  `expense_patent` decimal(10,2) DEFAULT 0.00,
+  `expense_computer_consumables` decimal(10,2) DEFAULT 0.00,
+  `expense_consumables` decimal(10,2) DEFAULT 0.00,
+  `expense_synthesis_analysis` decimal(10,2) DEFAULT 0.00,
+  `remarks` text DEFAULT NULL,
+  `application_status` enum('DRAFT','SUBMITTED','UNDER_REVIEW','HOD_APPROVED','HOD_REJECTED','AR_APPROVED','AR_REJECTED') DEFAULT 'DRAFT',
+  `submission_date` datetime DEFAULT NULL,
+  `last_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `hod_approval_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `hod_approval_date` datetime DEFAULT NULL,
+  `hod_remarks` text DEFAULT NULL,
+  `hod_approved_by` varchar(50) DEFAULT NULL,
+  `ar_approval_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `ar_approval_date` datetime DEFAULT NULL,
+  `ar_remarks` text DEFAULT NULL,
+  `ar_approved_by` varchar(50) DEFAULT NULL,
+  `sanctioned_amount` decimal(10,2) DEFAULT NULL,
+  `disbursement_status` enum('PENDING','PARTIAL','COMPLETED') DEFAULT 'PENDING',
+  `disbursed_amount` decimal(10,2) DEFAULT 0.00,
+  `disbursement_date` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `f4_reimbursement_applications`
+--
+
+INSERT INTO `f4_reimbursement_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `total_amount`, `expense_books`, `expense_stationary`, `expense_patent`, `expense_computer_consumables`, `expense_consumables`, `expense_synthesis_analysis`, `remarks`, `application_status`, `submission_date`, `last_updated`, `hod_approval_status`, `hod_approval_date`, `hod_remarks`, `hod_approved_by`, `ar_approval_status`, `ar_approval_date`, `ar_remarks`, `ar_approved_by`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`) VALUES
+(1, 'F4/2025/00001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43588.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:48:37', '2025-10-31 22:48:37', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:18:37', '2025-10-31 17:18:37'),
+(2, 'F4/2025/00002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 44341.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:51:45', '2025-11-04 20:50:39', 'APPROVED', '2025-11-04 20:48:51', 'd', '1110', 'APPROVED', '2025-11-04 20:50:39', 'hj', '1114', 44341.00, 'PENDING', 0.00, NULL, '2025-10-31 17:21:45', '2025-11-04 15:20:39'),
+(3, 'F4/2025/00003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:52:32', '2025-10-31 23:55:00', 'APPROVED', '2025-10-31 23:30:41', 'm', '1110', 'APPROVED', '2025-10-31 23:55:00', 'okk', '1114', 43230.00, 'PENDING', 0.00, NULL, '2025-10-31 17:22:32', '2025-10-31 18:25:00'),
+(4, 'F4/2025/00004', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43263.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:52:49', '2025-10-31 22:52:49', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:22:49', '2025-10-31 17:22:49'),
+(5, 'F4/2025/00005', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_REJECTED', '2025-10-31 22:53:17', '2025-10-31 23:55:56', 'APPROVED', '2025-10-31 23:30:27', 'm', '1110', 'REJECTED', '2025-10-31 23:55:56', 'z', '1114', 0.00, 'PENDING', 0.00, NULL, '2025-10-31 17:23:17', '2025-10-31 18:25:56'),
+(6, 'F4/2025/00006', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 'SUBMITTED', '2025-10-31 23:02:55', '2025-10-31 23:02:55', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:32:55', '2025-10-31 17:32:55');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `f4_reimbursement_attachments`
+--
+
+CREATE TABLE `f4_reimbursement_attachments` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `attachment_type` enum('BILL','RECEIPT','INVOICE','MEMBERSHIP_PROOF','BOOK_INVOICE','PATENT_DOCUMENT','OTHER') NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(500) NOT NULL,
+  `file_size` int(11) DEFAULT NULL,
+  `file_type` varchar(100) DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `uploaded_by` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `f4_reimbursement_attachments`
+--
+
+INSERT INTO `f4_reimbursement_attachments` (`id`, `application_id`, `attachment_type`, `file_name`, `file_path`, `file_size`, `file_type`, `description`, `uploaded_at`, `uploaded_by`) VALUES
+(1, 6, 'RECEIPT', 'F-5.pdf', '../uploads/f4/2025/F4_2025_00006_1761931975_0.pdf', 298045, 'application/pdf', '', '2025-10-31 17:32:55', '1101');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `f5_attachments`
+--
+
+CREATE TABLE `f5_attachments` (
+  `id` int(11) NOT NULL,
+  `reimbursement_id` int(11) NOT NULL,
+  `attachment_type` enum('REGISTRATION_RECEIPT','VISA_RECEIPT','INSURANCE_RECEIPT','FLIGHT_TICKET','TRAVEL_RECEIPT','HOTEL_BILL','BOARDING_LODGING','CONFERENCE_CERTIFICATE','OTHER') NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(500) NOT NULL,
+  `file_size` int(11) NOT NULL,
+  `file_type` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `f5_attachments`
+--
+
+INSERT INTO `f5_attachments` (`id`, `reimbursement_id`, `attachment_type`, `file_name`, `file_path`, `file_size`, `file_type`, `description`, `uploaded_at`) VALUES
+(2, 2, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/2_1762268402_0.pdf', 444303, 'application/pdf', '', '2025-11-04 15:00:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `f5_conference_reimbursements`
+--
+
+CREATE TABLE `f5_conference_reimbursements` (
+  `application_id` int(11) NOT NULL,
+  `ref_number` varchar(100) DEFAULT NULL,
+  `employee_code` int(11) NOT NULL,
+  `faculty_name` varchar(200) NOT NULL,
+  `designation` varchar(100) NOT NULL,
+  `pay_level` varchar(10) NOT NULL,
+  `department` varchar(200) NOT NULL,
+  `activity_nature` enum('International Conference','National Conference','Workshop','Short Term Course','Seminar','Symposium') NOT NULL,
+  `activity_name` varchar(500) NOT NULL,
+  `activity_start_date` date NOT NULL,
+  `activity_end_date` date NOT NULL,
+  `activity_venue` varchar(300) NOT NULL,
+  `location_type` enum('India','Abroad') NOT NULL,
+  `expense_registration` decimal(10,2) DEFAULT 0.00,
+  `expense_visa` decimal(10,2) DEFAULT 0.00,
+  `expense_insurance` decimal(10,2) DEFAULT 0.00,
+  `expense_air_fare` decimal(10,2) DEFAULT 0.00,
+  `expense_local_travel` decimal(10,2) DEFAULT 0.00,
+  `expense_da_per_diem` decimal(10,2) DEFAULT 0.00,
+  `expense_boarding_lodging` decimal(10,2) DEFAULT 0.00,
+  `expense_other` decimal(10,2) DEFAULT 0.00,
+  `expense_other_description` text DEFAULT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `remarks` text DEFAULT NULL,
+  `status` enum('PENDING','HOD_APPROVED','HOD_REJECTED','ACCOUNTS_APPROVED','ACCOUNTS_REJECTED','COMPLETED') DEFAULT 'PENDING',
+  `hod_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `hod_approved_by` varchar(50) DEFAULT NULL,
+  `hod_approved_at` datetime DEFAULT NULL,
+  `hod_comments` text DEFAULT NULL,
+  `accounts_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
+  `accounts_approved_by` varchar(50) DEFAULT NULL,
+  `accounts_approved_at` datetime DEFAULT NULL,
+  `accounts_comments` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `f5_conference_reimbursements`
+--
+
+INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation`, `pay_level`, `department`, `activity_nature`, `activity_name`, `activity_start_date`, `activity_end_date`, `activity_venue`, `location_type`, `expense_registration`, `expense_visa`, `expense_insurance`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other`, `expense_other_description`, `total_amount`, `remarks`, `status`, `hod_status`, `hod_approved_by`, `hod_approved_at`, `hod_comments`, `accounts_status`, `accounts_approved_by`, `accounts_approved_at`, `accounts_comments`, `created_at`, `updated_at`) VALUES
+(2, 'CPDA/F5/2025/690a14f2c1de0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'Workshop', 'dsf', '2025-11-28', '2025-11-29', 'asd', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, '', 'ACCOUNTS_REJECTED', 'APPROVED', '1110', '2025-11-04 20:55:19', 'sd', 'REJECTED', '1114', '2025-11-04 20:58:29', 'd', '2025-11-04 15:00:02', '2025-11-04 15:28:29');
 
 -- --------------------------------------------------------
 
@@ -539,11 +828,73 @@ ALTER TABLE `cpda_applications`
   ADD KEY `idx_dated` (`dated`);
 
 --
+-- Indexes for table `cpda_event_applications`
+--
+ALTER TABLE `cpda_event_applications`
+  ADD PRIMARY KEY (`application_id`),
+  ADD UNIQUE KEY `application_number` (`ref_number`),
+  ADD KEY `idx_employee_code` (`employee_code`),
+  ADD KEY `idx_application_status` (`application_status`),
+  ADD KEY `idx_submission_date` (`submission_date`),
+  ADD KEY `idx_application_number` (`ref_number`);
+
+--
+-- Indexes for table `cpda_event_attachments`
+--
+ALTER TABLE `cpda_event_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_application_id` (`application_id`);
+
+--
 -- Indexes for table `cpda_register_entries`
 --
 ALTER TABLE `cpda_register_entries`
   ADD PRIMARY KEY (`register_id`),
   ADD KEY `idx_application` (`application_id`);
+
+--
+-- Indexes for table `f4_professional_memberships`
+--
+ALTER TABLE `f4_professional_memberships`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_application_id` (`application_id`);
+
+--
+-- Indexes for table `f4_reimbursement_applications`
+--
+ALTER TABLE `f4_reimbursement_applications`
+  ADD PRIMARY KEY (`application_id`),
+  ADD UNIQUE KEY `ref_number` (`ref_number`),
+  ADD KEY `idx_employee_code` (`employee_code`),
+  ADD KEY `idx_application_status` (`application_status`),
+  ADD KEY `idx_submission_date` (`submission_date`),
+  ADD KEY `idx_ref_number` (`ref_number`);
+
+--
+-- Indexes for table `f4_reimbursement_attachments`
+--
+ALTER TABLE `f4_reimbursement_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_application_id` (`application_id`);
+
+--
+-- Indexes for table `f5_attachments`
+--
+ALTER TABLE `f5_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_reimbursement_id` (`reimbursement_id`),
+  ADD KEY `idx_attachment_type` (`attachment_type`);
+
+--
+-- Indexes for table `f5_conference_reimbursements`
+--
+ALTER TABLE `f5_conference_reimbursements`
+  ADD PRIMARY KEY (`application_id`),
+  ADD UNIQUE KEY `ref_number` (`ref_number`),
+  ADD KEY `idx_employee_code` (`employee_code`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_activity_dates` (`activity_start_date`,`activity_end_date`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `fdx_electronic_devices`
@@ -630,7 +981,7 @@ ALTER TABLE `application_attachments`
 -- AUTO_INCREMENT for table `approval_workflow`
 --
 ALTER TABLE `approval_workflow`
-  MODIFY `workflow_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `workflow_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `conference_expenditure`
@@ -654,13 +1005,55 @@ ALTER TABLE `contingent_expenditure`
 -- AUTO_INCREMENT for table `cpda_applications`
 --
 ALTER TABLE `cpda_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `cpda_event_applications`
+--
+ALTER TABLE `cpda_event_applications`
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `cpda_event_attachments`
+--
+ALTER TABLE `cpda_event_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `cpda_register_entries`
 --
 ALTER TABLE `cpda_register_entries`
   MODIFY `register_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `f4_professional_memberships`
+--
+ALTER TABLE `f4_professional_memberships`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `f4_reimbursement_applications`
+--
+ALTER TABLE `f4_reimbursement_applications`
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `f4_reimbursement_attachments`
+--
+ALTER TABLE `f4_reimbursement_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `f5_attachments`
+--
+ALTER TABLE `f5_attachments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `f5_conference_reimbursements`
+--
+ALTER TABLE `f5_conference_reimbursements`
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `fdx_electronic_devices`
@@ -745,10 +1138,52 @@ ALTER TABLE `contingent_expenditure`
   ADD CONSTRAINT `contingent_expenditure_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `cpda_applications` (`application_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `cpda_event_applications`
+--
+ALTER TABLE `cpda_event_applications`
+  ADD CONSTRAINT `cpda_event_applications_ibfk_1` FOREIGN KEY (`employee_code`) REFERENCES `users` (`employee_code`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `cpda_event_attachments`
+--
+ALTER TABLE `cpda_event_attachments`
+  ADD CONSTRAINT `cpda_event_attachments_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `cpda_event_applications` (`application_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `cpda_register_entries`
 --
 ALTER TABLE `cpda_register_entries`
   ADD CONSTRAINT `cpda_register_entries_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `cpda_applications` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `f4_professional_memberships`
+--
+ALTER TABLE `f4_professional_memberships`
+  ADD CONSTRAINT `f4_professional_memberships_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `f4_reimbursement_applications` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `f4_reimbursement_applications`
+--
+ALTER TABLE `f4_reimbursement_applications`
+  ADD CONSTRAINT `f4_reimbursement_applications_ibfk_1` FOREIGN KEY (`employee_code`) REFERENCES `users` (`employee_code`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `f4_reimbursement_attachments`
+--
+ALTER TABLE `f4_reimbursement_attachments`
+  ADD CONSTRAINT `f4_reimbursement_attachments_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `f4_reimbursement_applications` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `f5_attachments`
+--
+ALTER TABLE `f5_attachments`
+  ADD CONSTRAINT `f5_attachments_ibfk_1` FOREIGN KEY (`reimbursement_id`) REFERENCES `f5_conference_reimbursements` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `f5_conference_reimbursements`
+--
+ALTER TABLE `f5_conference_reimbursements`
+  ADD CONSTRAINT `f5_conference_reimbursements_ibfk_1` FOREIGN KEY (`employee_code`) REFERENCES `users` (`employee_code`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `fdx_electronic_devices`
