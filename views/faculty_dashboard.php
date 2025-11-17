@@ -19,7 +19,9 @@ if (!isset($_SESSION['employee_code'])) {
     <a href="form2_faculty.php">➕ CPDA Event Participation Applications (Form 2)</a><br/>
     <a href="form3_faculty.php">➕ Reimbursement Purchase & Membership Applications (Form 3)</a><br/>
     <a href="form4_faculty.php">➕ Reimbursement Event Participation Applications (Form 4)</a><br/>
-
+    <br>
+    
+    <a href="faculty_application_history.php">HISTORY</a><br/>
     <a href="../controllers/logout.php">Logout</a>
 </body>
 </html>

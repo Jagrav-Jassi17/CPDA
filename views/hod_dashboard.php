@@ -33,11 +33,10 @@ $sql2 = "SELECT
             a.expense_total,
             a.submission_date,
             a.application_status,
-            a.hod_approval_status
+            a.current_stage
         FROM cpda_event_applications a
         WHERE a.department = ? 
-          AND a.application_status IN ('SUBMITTED', 'UNDER_REVIEW')
-          AND a.hod_approval_status = 'PENDING'
+          AND a.current_stage = 'HOD_REVIEW'
         ORDER BY a.submission_date DESC"; 
 
 $stmt2 = $conn->prepare($sql2);
@@ -246,7 +245,7 @@ $result4 = $stmt4->get_result();
 <body>
 
 <div class="container">
-    <a href="../logout.php" class="logout-btn">Logout</a>
+    <a href="../controllers/logout.php" class="logout-btn">Logout</a>
     <h2>HOD Dashboard</h2>
     
     <div class="header-info">
@@ -325,7 +324,6 @@ $result4 = $stmt4->get_result();
                 <th>Period</th>
                 <th>Total Amount (₹)</th>
                 <th>Submitted On</th>
-                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -345,7 +343,6 @@ $result4 = $stmt4->get_result();
                         <td><?= htmlspecialchars($row['period_of_event']); ?></td>
                         <td style="text-align: right;">₹<?= number_format($row['expense_total'], 2); ?></td>
                         <td><?= date('d-M-Y', strtotime($row['submission_date'])); ?></td>
-                        <td class="status-pending"><?= htmlspecialchars($row['hod_approval_status']); ?></td>
                         <td>
                             <a href="hod_view_application.php?application_id=<?= $row['application_id']; ?>&type=event" class="btn-view">View & Review</a>
                         </td>

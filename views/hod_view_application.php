@@ -111,6 +111,64 @@ if ($type === 'event') {
     $stmt3->execute();
     $items = $stmt3->get_result();
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['application_id']) && isset($_POST['hod_remarks']) && isset($_POST['action'])) {
+    $ref_number_for_message = null;
+    try {
+        $app_id_for_message = (int)$_POST['application_id'];
+        $hod_remarks_for_message = trim($_POST['hod_remarks']);
+        $action_for_message = $_POST['action'];
+        $sender_employee_code = $_SESSION['employee_code'];
+        
+        // Get ref_number of this application to link message
+        $stmt_ref = $conn->prepare("SELECT ref_number FROM (SELECT application_id, ref_number FROM cpda_applications UNION ALL SELECT application_id, ref_number FROM cpda_event_applications UNION ALL SELECT application_id, ref_number FROM f4_reimbursement_applications UNION ALL SELECT application_id, ref_number FROM f5_conference_reimbursements) AS combined WHERE application_id = ?");
+        $stmt_ref->bind_param("i", $app_id_for_message);
+        $stmt_ref->execute();
+        $res_ref = $stmt_ref->get_result();
+        if ($res_ref->num_rows === 0) {
+            throw new Exception("Cannot find reference number for this application");
+        }
+        $row_ref = $res_ref->fetch_assoc();
+        $ref_number_for_message = $row_ref['ref_number'];
+        $stmt_ref->close();
+        
+        // Determine next message_sequence number
+        $stmt_seq = $conn->prepare("SELECT IFNULL(MAX(message_sequence), 0) + 1 AS next_seq FROM application_timeline_messages WHERE ref_number = ?");
+        $stmt_seq->bind_param("s", $ref_number_for_message);
+        $stmt_seq->execute();
+        $res_seq = $stmt_seq->get_result();
+        $seq_row = $res_seq->fetch_assoc();
+        $next_seq = $seq_row['next_seq'];
+        $stmt_seq->close();
+        
+        // Compose message to insert
+        $message_to_insert = ($action_for_message === 'approve' ? "[APPROVED] " : "[REJECTED] ") . $hod_remarks_for_message;
+        
+        // Insert message
+        $stmt_msg = $conn->prepare("INSERT INTO application_timeline_messages (ref_number, message_sequence, message, sender_identifier, message_time) VALUES (?, ?, ?, ?, NOW())");
+        $stmt_msg->bind_param("siss", $ref_number_for_message, $next_seq, $message_to_insert, $sender_employee_code);
+        if (!$stmt_msg->execute()) {
+            throw new Exception("Failed to insert timeline message: " . $stmt_msg->error);
+        }
+        $stmt_msg->close();
+        
+        // You can redirect after submission or continue
+    } catch (Exception $e) {
+        // Handle exceptions/logging as needed
+        error_log("Timeline message insert failed: " . $e->getMessage());
+    }
+}
+$last_message = null;
+if (!empty($app['ref_number'])) {
+    $stmt_last_msg = $conn->prepare("SELECT message, sender_identifier, message_time FROM application_timeline_messages WHERE ref_number = ? ORDER BY message_sequence DESC LIMIT 1");
+    $stmt_last_msg->bind_param("s", $app['ref_number']);
+    $stmt_last_msg->execute();
+    $res_last_msg = $stmt_last_msg->get_result();
+    if ($res_last_msg->num_rows > 0) {
+        $last_message = $res_last_msg->fetch_assoc();
+    }
+    $stmt_last_msg->close();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -422,6 +480,12 @@ if ($type === 'event') {
                 <tr><td colspan="4"><em>No attachments uploaded</em></td></tr>
             <?php endif; ?>
         </table>
+        <?php if ($last_message): ?>
+        <div style="background:#e7f0ff; border:1px solid #007bff; padding:15px; margin-bottom:20px; border-radius:5px;">
+            <strong>Last Message:</strong> <?= htmlspecialchars($last_message['message']); ?><br>
+            <small><em>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> on <?= $last_message['message_time']; ?></em></small>
+        </div>
+        <?php endif; ?>
 
         <!-- HOD Action for F-5 Form -->
         <div class="button-group">
@@ -559,6 +623,12 @@ if ($type === 'event') {
                 <tr><td colspan="4"><em>No attachments uploaded</em></td></tr>
             <?php endif; ?>
         </table>
+        <?php if ($last_message): ?>
+        <div style="background:#e7f0ff; border:1px solid #007bff; padding:15px; margin-bottom:20px; border-radius:5px;">
+            <strong>Last Message:</strong> <?= htmlspecialchars($last_message['message']); ?><br>
+            <small><em>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> on <?= $last_message['message_time']; ?></em></small>
+        </div>
+        <?php endif; ?>
 
         <!-- HOD Action for F-4 Form -->
         <div class="button-group">
@@ -690,6 +760,12 @@ if ($type === 'event') {
                 <tr><td colspan="2"><em>No attachments uploaded</em></td></tr>
             <?php endif; ?>
         </table>
+        <?php if ($last_message): ?>
+        <div style="background:#e7f0ff; border:1px solid #007bff; padding:15px; margin-bottom:20px; border-radius:5px;">
+            <strong>Last Message:</strong> <?= htmlspecialchars($last_message['message']); ?><br>
+            <small><em>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> on <?= $last_message['message_time']; ?></em></small>
+        </div>
+        <?php endif; ?>
 
         <!-- HOD Action for Event Form -->
         <div class="button-group">
@@ -698,7 +774,7 @@ if ($type === 'event') {
                 <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
                 
                 <label><strong>HOD Comments / Remarks:</strong></label><br>
-                <textarea name="hod_remarks" rows="5" required placeholder="Enter your comments or recommendations here..."></textarea>
+                <textarea name="hod_remarks" rows="5" placeholder="Enter your comments or recommendations here..."></textarea>
                 <br><br>
                 
                 <button type="submit" name="action" value="approve" class="btn-approve">
@@ -724,7 +800,7 @@ if ($type === 'event') {
             <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
             <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
             <tr><th>Date of Joining</th><td><?= htmlspecialchars($app['date_of_joining']); ?></td></tr>
-            <tr><th>PDA Block</th><td><?= htmlspecialchars($app['pda_block_start_year']); ?> – <?= htmlspecialchars($app['pda_block_end_year']); ?></td></tr>
+            
         </table>
 
         <h3>Purchase Details</h3>
@@ -766,6 +842,12 @@ if ($type === 'event') {
                 <tr><td colspan="4"><em>No consumable items listed.</em></td></tr>
             <?php endif; ?>
         </table>
+        <?php if ($last_message): ?>
+        <div style="background:#e7f0ff; border:1px solid #007bff; padding:15px; margin-bottom:20px; border-radius:5px;">
+            <strong>Last Message:</strong> <?= htmlspecialchars($last_message['message']); ?><br>
+            <small><em>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> on <?= $last_message['message_time']; ?></em></small>
+        </div>
+        <?php endif; ?>
 
         <!-- HOD Action for Form 1 -->
         <div class="button-group">

@@ -105,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             previous_event_dates,
             previous_event_venues,
             application_status,
+            current_stage,
             submission_date
         ) VALUES (
             '$ref_number',
@@ -141,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             '$previous_event_dates',
             '$previous_event_venues',
             'SUBMITTED',
+            'HOD_REVIEW',
             NOW()
         )";
         
