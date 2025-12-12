@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "college_erp";
+$dbname = "clg";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

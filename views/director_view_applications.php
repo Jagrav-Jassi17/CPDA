@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $new_status = 'DIRECTOR_REJECTED';
         $new_stage = 'COMPLETED';
     } else if ($action === 'send_back') {
-        $new_status = 'DFW_APPROVED';
+        $new_status = 'DRAFT';
         $new_stage = 'DFW_REVIEW'; // send back to DA for correction
     }
 
