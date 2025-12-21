@@ -81,6 +81,21 @@ $sql_recent = "
     ORDER BY last_updated DESC 
     LIMIT 10";
 $result_recent = $conn->query($sql_recent);
+// Fetch CPDA Form-1 applications for balance verification
+$sql_f1_balance = "
+    SELECT 
+        application_id,
+        ref_number,
+        employee_code,
+        faculty_name,
+        department,
+        status,
+        created_at
+    FROM cpda_applications
+    ORDER BY created_at DESC
+";
+$result_f1_balance = $conn->query($sql_f1_balance);
+
 ?>
 
 <!DOCTYPE html>
@@ -275,6 +290,55 @@ $result_recent = $conn->query($sql_recent);
             <div class="stat-label">F-5 Conference Pending</div>
         </div>
     </div>
+
+    <div class="section-divider"></div>
+
+<h3>📊 CPDA Balance Verification (Form-1)</h3>
+<p style="color: #555; font-size: 14px; margin-top: -15px;">
+    <em>Verify and approve CPDA balance impact for Form-1 applications.</em>
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Ref No.</th>
+            <th>Faculty Name</th>
+            <th>Employee Code</th>
+            <th>Department</th>
+            <th>Application Status</th>
+            <th>Submitted On</th>
+            <th>Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if ($result_f1_balance && $result_f1_balance->num_rows > 0): ?>
+            <?php while ($row = $result_f1_balance->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['ref_number']); ?></td>
+                    <td><?= htmlspecialchars($row['faculty_name']); ?></td>
+                    <td><?= htmlspecialchars($row['employee_code']); ?></td>
+                    <td><?= htmlspecialchars($row['department']); ?></td>
+                    <td><?= htmlspecialchars($row['status']); ?></td>
+                    <td><?= date('d-M-Y', strtotime($row['created_at'])); ?></td>
+                    <td>
+                        <a 
+                            href="balance_view.php?form_type=F1&form_id=<?= (int)$row['application_id']; ?>" 
+                            class="btn-view">
+                            View / Approve Balance
+                        </a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="7" class="no-data">
+                    No CPDA Form-1 applications found.
+                </td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
 
     <!-- F-4 Reimbursement Applications -->
     <h3>💰 F-4 Reimbursement Applications - Final Approval</h3>
