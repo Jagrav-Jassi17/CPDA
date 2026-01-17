@@ -26,14 +26,11 @@ if (!isset($_SESSION['employee_code'])) {
     <br>
     <hr>
 
-    <!-- STEP 1 FIX: Separate Balance Page -->
-    <a href="faculty_balance.php">
-        📊 View CPDA Balance
-    </a><br/>
-
-    <br>
-
+    <a href="faculty_balance.php">📊 View CPDA Balance</a><br/>
     <a href="faculty_application_history.php">📄 Application History</a><br/>
+    
+    <a href="balance_database.php?employee_code=<?= urlencode($_SESSION['employee_code']); ?>" target="_blank">💰 Balance Chart</a><br/>
+    
     <a href="../controllers/logout.php">Logout</a>
 </body>
 </html>

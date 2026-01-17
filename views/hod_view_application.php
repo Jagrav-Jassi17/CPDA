@@ -342,7 +342,6 @@ if (!empty($app['ref_number'])) {
     </h2>
     
     <p><a href="hod_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
-
     <?php if ($type === 'f5'): ?>
         <!-- F-5 CONFERENCE REIMBURSEMENT APPLICATION -->
         

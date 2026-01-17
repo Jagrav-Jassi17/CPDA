@@ -14,7 +14,7 @@ $employee_code = $_SESSION['employee_code'];
    FETCH FORM-1 (CPDA Permission – Purchase & Membership)
    ========================================================== */
 $stmt = $conn->prepare("
-    SELECT ref_number, application_id, status, accounts_status, current_stage, created_at
+    SELECT ref_number, application_id, status, current_stage, created_at
     FROM cpda_applications
     WHERE employee_code = ?
     ORDER BY created_at DESC
@@ -100,7 +100,7 @@ $stmt4->close();
         <tr>
             <th>Reference No</th>
             <th>Status</th>
-            <th>Accounts Status</th>
+            <!-- <th>Accounts Status</th> -->
             <th>Submitted</th>
             <th>Actions</th>
         </tr>
@@ -112,9 +112,9 @@ $stmt4->close();
             <tr>
                 <td><?= htmlspecialchars($app['ref_number']) ?></td>
                 <td><?= htmlspecialchars($app['status']) ?></td>
-                <td class="<?= $app['accounts_status'] === 'REVERTED' ? 'reverted' : '' ?>">
+                <!-- <td class="<?= $app['accounts_status'] === 'REVERTED' ? 'reverted' : '' ?>">
                     <?= htmlspecialchars($app['accounts_status']) ?>
-                </td>
+                </td> -->
                 <td><?= htmlspecialchars($app['created_at']) ?></td>
                 <td>
                     <a class="btn btn-view"
@@ -127,13 +127,13 @@ $stmt4->close();
                        Balance
                     </a>
 
-                    <?php if ($app['accounts_status'] === 'REVERTED' &&
+                    <!-- <?php if ($app['accounts_status'] === 'REVERTED' &&
                               $app['current_stage'] === 'FACULTY_EDIT'): ?>
                         <a class="btn btn-edit"
                            href="form1_edit.php?application_id=<?= (int)$app['application_id'] ?>">
                            Edit & Resubmit
                         </a>
-                    <?php endif; ?>
+                    <?php endif; ?> -->
                 </td>
             </tr>
         <?php endforeach; endif; ?>

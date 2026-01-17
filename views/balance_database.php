@@ -2,11 +2,17 @@
 session_start();
 include_once '../config/db.php';
 
-if ($_SESSION['role'] !== 'accounts_ar') {
-    header("Location: login.php");
-    exit();
-}
-
+// if ($_SESSION['role'] !== 'accounts_ar') {
+//     header("Location: login.php");
+//     exit();
+// }
+// if (isset($_SESSION['employee_code'])) {
+//     $search_employee_code = $_SESSION['employee_code'];
+//     echo "Accessing data for Employee: " . htmlspecialchars($search_employee_code);
+// } else {
+//     echo "Session expired. Please login again.";
+// }
+$role = $_POST['role'] ?? $_GET['role'] ?? '';
 $search_employee_code = $_POST['employee_code'] ?? $_GET['employee_code'] ?? '';
 $action = $_POST['action'] ?? '';
 
@@ -36,7 +42,7 @@ if ($search_employee_code) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounts AR </title>
+    <title>Balance sheet </title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f5f5f5; }
         .container { max-width: 1400px; margin: 20px auto; background: white; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -77,7 +83,6 @@ if ($search_employee_code) {
         <?php endif; ?>
 
         
-
         <!-- Results Summary -->
         <?php if ($results): ?>
             <div class="summary">

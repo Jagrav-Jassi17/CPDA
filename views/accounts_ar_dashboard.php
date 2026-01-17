@@ -7,6 +7,52 @@ if (!isset($_SESSION['employee_code']) || $_SESSION['role'] !== 'accounts_ar') {
     header("Location: ../views/login.php");
     exit();
 }
+$search_employee_code = $_POST['employee_code'] ?? '';
+$results = [];
+
+// Handle search
+if ($search_employee_code) {
+    $search_param = "%$search_employee_code%";
+    $stmt = $conn->prepare("SELECT * FROM fdx_expenditure_main WHERE employee_code LIKE ?");
+    $stmt->bind_param("s", $search_param);
+    $stmt->execute();
+    $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+// Handle adding new employee
+$action = $_POST['action'] ?? '';
+if ($action === 'add_employee') {
+    $employee_code = trim($_POST['new_employee_code']);
+    
+    if (empty($employee_code)) {
+        $error_msg = "❌ Employee code cannot be empty!";
+    } else {
+        // Check if employee already exists
+        $check_stmt = $conn->prepare("SELECT employee_code FROM fdx_expenditure_main WHERE employee_code = ?");
+        $check_stmt->bind_param("s", $employee_code);
+        $check_stmt->execute();
+        $exists = $check_stmt->get_result()->fetch_assoc();
+        
+        if ($exists) {
+            $error_msg = "❌ Employee '$employee_code' already exists!";
+        } else {
+            // Insert new employee with DEFAULT values for all fields
+            $insert_stmt = $conn->prepare("INSERT INTO fdx_expenditure_main (employee_code) VALUES (?)");
+            $insert_stmt->bind_param("s", $employee_code);
+            
+            if ($insert_stmt->execute()) {
+                $success_msg = "✅ New employee '$employee_code' added successfully!<br>ID: " . $insert_stmt->insert_id;
+                // Refresh search results
+                $search_param = "%$employee_code%";
+                $stmt = $conn->prepare("SELECT * FROM fdx_expenditure_main WHERE employee_code LIKE ? ORDER BY employee_code DESC");
+                $stmt->bind_param("s", $search_param);
+                $stmt->execute();
+                $results = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            } else {
+                $error_msg = "❌ Failed to add employee: " . $conn->error;
+            }
+        }
+    }
+}
 
 // Fetch F-4 Reimbursement Applications pending final approval
 $sql_f4 = "SELECT 
@@ -264,17 +310,64 @@ $result_f1_balance = $conn->query($sql_f1_balance);
     </style>
 </head>
 <body>
-
-<div class="container">
+    
     <a href="../controllers/logout.php" class="logout-btn">Logout</a>
     <h2>Assistant Registrar Dashboard - Final Approval</h2>
     
-    <div class="header-info">
+<div class="header-info">
         <strong>Welcome, <?= htmlspecialchars($_SESSION['name']); ?></strong><br>
-        <strong>Role:</strong> Assistant Registrar (Final Approval Authority)<br>
+        <strong>Department:</strong> <?= htmlspecialchars($_SESSION['department']); ?><br>
+        <strong>Role:</strong> Accounts Assistant Registrar<br>
         <strong>Employee Code:</strong> <?= htmlspecialchars($_SESSION['employee_code']); ?>
     </div>
+<div class="container">
+    
+    <h2>Accounts Section - F1 Data Management</h2>
+    <!-- Search Form -->
+    
+    
+        <h3>Search Employee </h3>
+    <form method="POST">
+        <div class="search-box">
+            <input type="text" name="employee_code" value="<?= htmlspecialchars($search_employee_code); ?>" placeholder="Enter Employee Code" required>
+            <button type="submit">Search</button>
+        </div>
+    </form>
 
+    <?php if ($results): ?>
+        <!-- Results Table -->
+        <h3>Found <?= count($results); ?> record(s) for Employee Code: <?= htmlspecialchars($search_employee_code); ?></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee Code</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($results as $row): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['employee_code']); ?></td>
+                        <td>
+                            <a href="balance_database.php?employee_code=<?= $row['employee_code']; ?>&role=<?= $_SESSION['role']; ?>" class="btn-edit" target="_blank">View</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+    
+        <h3> Add New Employee </h3>
+        <form method="POST" >
+            <input type="hidden" name="action" value="add_employee">
+            <div style="flex: 1;">
+                <input type="text" name="new_employee_code" placeholder="Enter Employee Code" required >
+                <button type="submit" >Add Employee</button>
+            </div>
+        </form>
+</div>
+<div>
+    <br>
     <!-- Summary Statistics -->
     <div class="stats-container">
         <div class="stat-card primary">
@@ -290,208 +383,161 @@ $result_f1_balance = $conn->query($sql_f1_balance);
             <div class="stat-label">F-5 Conference Pending</div>
         </div>
     </div>
-
-    <div class="section-divider"></div>
-
-<h3>📊 CPDA Balance Verification (Form-1)</h3>
-<p style="color: #555; font-size: 14px; margin-top: -15px;">
-    <em>Verify and approve CPDA balance impact for Form-1 applications.</em>
-</p>
-
-<table>
-    <thead>
-        <tr>
-            <th>Ref No.</th>
-            <th>Faculty Name</th>
-            <th>Employee Code</th>
-            <th>Department</th>
-            <th>Application Status</th>
-            <th>Submitted On</th>
-            <th>Balance</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if ($result_f1_balance && $result_f1_balance->num_rows > 0): ?>
-            <?php while ($row = $result_f1_balance->fetch_assoc()): ?>
-                <tr>
-                    <td><?= htmlspecialchars($row['ref_number']); ?></td>
-                    <td><?= htmlspecialchars($row['faculty_name']); ?></td>
-                    <td><?= htmlspecialchars($row['employee_code']); ?></td>
-                    <td><?= htmlspecialchars($row['department']); ?></td>
-                    <td><?= htmlspecialchars($row['status']); ?></td>
-                    <td><?= date('d-M-Y', strtotime($row['created_at'])); ?></td>
-                    <td>
-                        <a 
-                            href="balance_view.php?form_type=F1&form_id=<?= (int)$row['application_id']; ?>" 
-                            class="btn-view">
-                            View / Approve Balance
-                        </a>
-                    </td>
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7" class="no-data">
-                    No CPDA Form-1 applications found.
-                </td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
-
-
-    <!-- F-4 Reimbursement Applications -->
-    <h3>💰 F-4 Reimbursement Applications - Final Approval</h3>
-    <p style="color: #555; font-size: 14px; margin-top: -15px;">
-        <em>These applications have been approved by respective HODs and are awaiting your final approval.</em>
-    </p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Ref No.</th>
-                <th>Faculty Name</th>
-                <th>Employee Code</th>
-                <th>Department</th>
-                <th>Memberships</th>
-                <th>Attachments</th>
-                <th>Total Amount (₹)</th>
-                <th>HOD Status</th>
-                <th>Submitted On</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($result_f4->num_rows > 0): ?>
-                <?php while ($row = $result_f4->fetch_assoc()): ?>
+    
+    
+            
+            
+            <!-- F-4 Reimbursement Applications -->
+            <h3>💰 F-4 Reimbursement Applications - Final Approval</h3>
+            <p style="color: #555; font-size: 14px; margin-top: -15px;">
+                <em>These applications have been approved by respective HODs and are awaiting your final approval.</em>
+            </p>
+            
+            <table>
+                <thead>
                     <tr>
-                        <td><?= htmlspecialchars($row['ref_number']); ?></td>
-                        <td><?= htmlspecialchars($row['faculty_name']); ?></td>
-                        <td><?= htmlspecialchars($row['employee_code']); ?></td>
-                        <td><?= htmlspecialchars($row['department']); ?></td>
-                        <td>
-                            <?php if ($row['membership_count'] > 0): ?>
-                                <span class="badge"><?= $row['membership_count']; ?> Membership(s)</span>
-                            <?php else: ?>
-                                <span style="color: #999;">-</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php if ($row['attachment_count'] > 0): ?>
-                                <span class="badge" style="background: #6c757d;"><?= $row['attachment_count']; ?> Files</span>
-                            <?php else: ?>
-                                <span style="color: #999;">-</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="text-align: right;">₹<?= number_format($row['total_amount'], 2); ?></td>
-                        <td class="status-approved">✓ <?= htmlspecialchars($row['hod_approval_status']); ?></td>
-                        <td><?= date('d-M-Y', strtotime($row['submission_date'])); ?></td>
-                        <td>
-                            <a href="ar_view_application.php?application_id=<?= $row['application_id']; ?>&type=f4" class="btn-view">Review & Approve</a>
-                        </td>
+                        <th>Ref No.</th>
+                        <th>Faculty Name</th>
+                        <th>Employee Code</th>
+                        <th>Department</th>
+                        <th>Memberships</th>
+                        <th>Attachments</th>
+                        <th>Total Amount (₹)</th>
+                        <th>HOD Status</th>
+                        <th>Submitted On</th>
+                        <th>Action</th>
                     </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="10" class="no-data">No F-4 reimbursement applications pending final approval at this time.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <div class="section-divider"></div>
-
-    <!-- F-5 Conference Reimbursement Applications -->
-    <h3>✈️ F-5 Conference/Workshop Reimbursement Applications - Final Approval</h3>
-    <p style="color: #555; font-size: 14px; margin-top: -15px;">
-        <em>These applications have been approved by HOD and are awaiting your final approval.</em>
-    </p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Ref No.</th>
-                <th>Faculty Name</th>
-                <th>Employee Code</th>
-                <th>Department</th>
-                <th>Activity Type</th>
-                <th>Activity Name</th>
-                <th>Event Dates</th>
-                <th>Location</th>
-                <th>Attachments</th>
-                <th>Total Amount (₹)</th>
-                <th>HOD Status</th>
-                <th>Submitted On</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($result_f5->num_rows > 0): ?>
-                <?php while ($row = $result_f5->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['ref_number']); ?></td>
-                        <td><?= htmlspecialchars($row['faculty_name']); ?></td>
-                        <td><?= htmlspecialchars($row['employee_code']); ?></td>
-                        <td><?= htmlspecialchars($row['department']); ?></td>
-                        <td>
-                            <span class="badge"><?= htmlspecialchars($row['activity_nature']); ?></span>
-                        </td>
-                        <td><?= htmlspecialchars(substr($row['activity_name'], 0, 35)); ?>
-                            <?= strlen($row['activity_name']) > 35 ? '...' : ''; ?>
-                        </td>
-                        <td style="white-space: nowrap; font-size: 12px;">
-                            <?= date('d-M-y', strtotime($row['activity_start_date'])); ?> to<br>
-                            <?= date('d-M-y', strtotime($row['activity_end_date'])); ?>
-                        </td>
-                        <td>
-                            <span class="badge-location badge-<?= strtolower($row['location_type']); ?>">
-                                <?= htmlspecialchars($row['location_type']); ?>
+                </thead>
+                <tbody>
+                    <?php if ($result_f4->num_rows > 0): ?>
+                        <?php while ($row = $result_f4->fetch_assoc()): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['ref_number']); ?></td>
+                                <td><?= htmlspecialchars($row['faculty_name']); ?></td>
+                                <td><?= htmlspecialchars($row['employee_code']); ?></td>
+                                <td><?= htmlspecialchars($row['department']); ?></td>
+                                <td>
+                                    <?php if ($row['membership_count'] > 0): ?>
+                                        <span class="badge"><?= $row['membership_count']; ?> Membership(s)</span>
+                                        <?php else: ?>
+                                            <span style="color: #999;">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if ($row['attachment_count'] > 0): ?>
+                                                <span class="badge" style="background: #6c757d;"><?= $row['attachment_count']; ?> Files</span>
+                                                <?php else: ?>
+                                                    <span style="color: #999;">-</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td style="text-align: right;">₹<?= number_format($row['total_amount'], 2); ?></td>
+                                                <td class="status-approved">✓ <?= htmlspecialchars($row['hod_approval_status']); ?></td>
+                                                <td><?= date('d-M-Y', strtotime($row['submission_date'])); ?></td>
+                                                <td>
+                                                    <a href="ar_view_application.php?application_id=<?= $row['application_id']; ?>&type=f4" class="btn-view">Review & Approve</a>
+                                                </td>
+                                            </tr>
+                                            <?php endwhile; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="10" class="no-data">No F-4 reimbursement applications pending final approval at this time.</td>
+                                                </tr>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                        
+                                        <div class="section-divider"></div>
+                                        
+                                        <!-- F-5 Conference Reimbursement Applications -->
+                                        <h3>✈️ F-5 Conference/Workshop Reimbursement Applications - Final Approval</h3>
+                                        <p style="color: #555; font-size: 14px; margin-top: -15px;">
+                                            <em>These applications have been approved by HOD and are awaiting your final approval.</em>
+                                        </p>
+                                        
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Ref No.</th>
+                                                    <th>Faculty Name</th>
+                                                    <th>Employee Code</th>
+                                                    <th>Department</th>
+                                                    <th>Activity Type</th>
+                                                    <th>Activity Name</th>
+                                                    <th>Event Dates</th>
+                                                    <th>Location</th>
+                                                    <th>Attachments</th>
+                                                    <th>Total Amount (₹)</th>
+                                                    <th>HOD Status</th>
+                                                    <th>Submitted On</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if ($result_f5->num_rows > 0): ?>
+                                                    <?php while ($row = $result_f5->fetch_assoc()): ?>
+                                                        <tr>
+                                                            <td><?= htmlspecialchars($row['ref_number']); ?></td>
+                                                            <td><?= htmlspecialchars($row['faculty_name']); ?></td>
+                                                            <td><?= htmlspecialchars($row['employee_code']); ?></td>
+                                                            <td><?= htmlspecialchars($row['department']); ?></td>
+                                                            <td>
+                                                                <span class="badge"><?= htmlspecialchars($row['activity_nature']); ?></span>
+                                                            </td>
+                                                            <td><?= htmlspecialchars(substr($row['activity_name'], 0, 35)); ?>
+                                                            <?= strlen($row['activity_name']) > 35 ? '...' : ''; ?>
+                                                        </td>
+                                                        <td style="white-space: nowrap; font-size: 12px;">
+                                                            <?= date('d-M-y', strtotime($row['activity_start_date'])); ?> to<br>
+                                                            <?= date('d-M-y', strtotime($row['activity_end_date'])); ?>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge-location badge-<?= strtolower($row['location_type']); ?>">
+                                                                <?= htmlspecialchars($row['location_type']); ?>
                             </span>
                         </td>
                         <td style="text-align: center;">
                             <?php if ($row['attachment_count'] > 0): ?>
                                 <span class="badge" style="background: #6c757d;">📎 <?= $row['attachment_count']; ?></span>
+                                <?php else: ?>
+                                    <span style="color: #999;">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td style="text-align: right;">₹<?= number_format($row['total_amount'], 2); ?></td>
+                                <td class="status-approved">
+                                    ✓ <?= htmlspecialchars($row['hod_status']); ?>
+                                </td>
+                                <td><?= date('d-M-Y', strtotime($row['created_at'])); ?></td>
+                                <td>
+                                    <a href="ar_view_application.php?application_id=<?= $row['application_id']; ?>&type=f5" class="btn-view">Review & Approve</a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
                             <?php else: ?>
-                                <span style="color: #999;">-</span>
-                            <?php endif; ?>
-                        </td>
-                        <td style="text-align: right;">₹<?= number_format($row['total_amount'], 2); ?></td>
-                        <td class="status-approved">
-                            ✓ <?= htmlspecialchars($row['hod_status']); ?>
-                        </td>
-                        <td><?= date('d-M-Y', strtotime($row['created_at'])); ?></td>
-                        <td>
-                            <a href="ar_view_application.php?application_id=<?= $row['application_id']; ?>&type=f5" class="btn-view">Review & Approve</a>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="13" class="no-data">No F-5 conference reimbursement applications pending final approval at this time.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <div class="section-divider"></div>
-
-    <!-- Recent Activity -->
-    <h3>📊 Recent Activity</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Form Type</th>
-                <th>Ref Number</th>
-                <th>Faculty Name</th>
-                <th>Amount</th>
-                <th>Final Status</th>
-                <th>Last Updated</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($result_recent->num_rows > 0): ?>
-                <?php while ($row = $result_recent->fetch_assoc()): ?>
-                    <tr>
+                                <tr>
+                                    <td colspan="13" class="no-data">No F-5 conference reimbursement applications pending final approval at this time.</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                        <div class="section-divider"></div>
+                        
+                        <!-- Recent Activity -->
+                        <h3>📊 Recent Activity</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Form Type</th>
+                                    <th>Ref Number</th>
+                                    <th>Faculty Name</th>
+                                    <th>Amount</th>
+                                    <th>Final Status</th>
+                                    <th>Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ($result_recent->num_rows > 0): ?>
+                                    <?php while ($row = $result_recent->fetch_assoc()): ?>
+                                        <tr>
                         <td><span class="badge-form"><?= htmlspecialchars($row['form_type']); ?></span></td>
                         <td><?= htmlspecialchars($row['ref_number']); ?></td>
                         <td><?= htmlspecialchars($row['faculty_name']); ?></td>
@@ -499,21 +545,22 @@ $result_f1_balance = $conn->query($sql_f1_balance);
                         <td>
                             <?php if (strpos($row['status'], 'APPROVED') !== false): ?>
                                 <span class="status-approved"><?= htmlspecialchars($row['status']); ?></span>
+                                <?php else: ?>
+                                    <span style="color: #dc3545; font-weight: bold;"><?= htmlspecialchars($row['status']); ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= date('d-M-Y H:i', strtotime($row['last_updated'])); ?></td>
+                            </tr>
+                            <?php endwhile; ?>
                             <?php else: ?>
-                                <span style="color: #dc3545; font-weight: bold;"><?= htmlspecialchars($row['status']); ?></span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= date('d-M-Y H:i', strtotime($row['last_updated'])); ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6" class="no-data">No recent activity</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-</div>
-
-</body>
-</html>
+                                <tr>
+                                    <td colspan="6" class="no-data">No recent activity</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </body>
+                </html>
+                

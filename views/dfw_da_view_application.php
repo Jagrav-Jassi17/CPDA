@@ -357,6 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     </h2>
     
     <p><a href="dfw_da_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
+        <a href="balance_database.php?employee_code=<?= htmlspecialchars($app['employee_code']); ?>" target="_blank">💰 Balance Chart</a><br/>
 
     <?php if ($type === 'event'): ?>
         <!-- EVENT APPLICATION FORM (Keep existing code) -->
