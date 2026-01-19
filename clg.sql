@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 17, 2026 at 07:16 PM
+-- Generation Time: Jan 19, 2026 at 10:16 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -654,7 +654,6 @@ INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `emp
 CREATE TABLE `fdx_electronic_devices` (
   `Device_ID` int(11) NOT NULL,
   `employee_code` int(11) NOT NULL,
-  `S_No` varchar(10) NOT NULL,
   `Item_Description` varchar(255) NOT NULL,
   `Date_of_Issue` date DEFAULT NULL,
   `Cost_at_Time_of_Issue` decimal(10,2) DEFAULT NULL,
@@ -666,8 +665,10 @@ CREATE TABLE `fdx_electronic_devices` (
 -- Dumping data for table `fdx_electronic_devices`
 --
 
-INSERT INTO `fdx_electronic_devices` (`Device_ID`, `employee_code`, `S_No`, `Item_Description`, `Date_of_Issue`, `Cost_at_Time_of_Issue`, `Created_At`, `Updated_At`) VALUES
-(5, 1101, '1', 'Laptop', '2026-01-14', 26000.00, '2026-01-14 13:50:52', '2026-01-15 12:24:05');
+INSERT INTO `fdx_electronic_devices` (`Device_ID`, `employee_code`, `Item_Description`, `Date_of_Issue`, `Cost_at_Time_of_Issue`, `Created_At`, `Updated_At`) VALUES
+(46, 1101, 'l', '2004-04-07', 998.00, '2026-01-19 21:03:31', '2026-01-19 21:09:51'),
+(48, 1101, 'yujh', '2026-01-02', 45.00, '2026-01-19 21:07:07', '2026-01-19 21:10:18'),
+(49, 1101, '7', '2026-01-01', 78.00, '2026-01-19 21:10:47', '2026-01-19 21:10:47');
 
 -- --------------------------------------------------------
 
@@ -731,7 +732,7 @@ CREATE TABLE `fdx_expenditure_main` (
 --
 
 INSERT INTO `fdx_expenditure_main` (`Sr. no`, `employee_code`, `P1_Conferences_Y1_Num_Events`, `P1_Conferences_Y1_Amt_Spent`, `P1_Conferences_Y1_Amt_Committed`, `P1_Conferences_Y1_Balance`, `P1_Conferences_Y2_Num_Events`, `P1_Conferences_Y2_Amt_Spent`, `P1_Conferences_Y2_Amt_Committed`, `P1_Conferences_Y2_Balance`, `P1_Conferences_Y3_Num_Events`, `P1_Conferences_Y3_Amt_Spent`, `P1_Conferences_Y3_Amt_Committed`, `P1_Conferences_Y3_Balance`, `P2_Membership_Y1_Num_Availed`, `P2_Membership_Y1_Amt_Spent`, `P2_Membership_Y1_Amt_Committed`, `P2_Membership_Y1_Balance`, `P2_Membership_Y2_Num_Availed`, `P2_Membership_Y2_Amt_Spent`, `P2_Membership_Y2_Amt_Committed`, `P2_Membership_Y2_Balance`, `P2_Membership_Y3_Num_Availed`, `P2_Membership_Y3_Amt_Spent`, `P2_Membership_Y3_Amt_Committed`, `P2_Membership_Y3_Balance`, `P3a_Consumables_Y1_Amt_Committed`, `P3a_Consumables_Y2_Amt_Committed`, `P3a_Consumables_Y3_Amt_Committed`, `P3a_Consumables_Balance`, `P3b_Synthesis_Testing_Y1_Amt_Committed`, `P3b_Synthesis_Testing_Y2_Amt_Committed`, `P3b_Synthesis_Testing_Y3_Amt_Committed`, `P3b_Synthesis_Testing_Balance`, `P3c_i_Stationary_Y1_Amt_Committed`, `P3c_i_Stationary_Y2_Amt_Committed`, `P3c_i_Stationary_Y3_Amt_Committed`, `P3c_i_Stationary_Balance`, `P3c_ii_Books_Y1_Amt_Committed`, `P3c_ii_Books_Y2_Amt_Committed`, `P3c_ii_Books_Y3_Amt_Committed`, `P3c_ii_Books_Balance`, `P3d_Computer_Consumables_Y1_Amt_Committed`, `P3d_Computer_Consumables_Y2_Amt_Committed`, `P3d_Computer_Consumables_Y3_Amt_Committed`, `P3d_Computer_Consumables_Balance`, `Created_At`, `Updated_At`) VALUES
-(1, 1101, 122, 1000.20, 15222.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-14 08:46:55', '2026-01-15 12:48:38'),
+(1, 1101, 122, 1500.00, 15222.00, 35.00, 42, 45.00, 1.00, 56.00, 12, 536.00, 53.00, 22.00, 45, 54.00, 21.00, 89.00, 4, 5.00, 2.00, 65.00, 798, 54.00, 3.00, 565.00, 21.00, 56.00, 56.00, 4.00, 211.00, 5.00, 24.00, 24.00, 554.00, 24.00, 5.00, 5.00, 45.00, 65.00, 89.00, 5.00, 89.00, 5553.00, 56.00, 536.00, '2026-01-14 08:46:55', '2026-01-19 18:54:11'),
 (2, 1102, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-17 17:52:56', '2026-01-17 17:52:56'),
 (3, 1103, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-17 18:06:01', '2026-01-17 18:06:01');
 
@@ -1068,8 +1069,7 @@ ALTER TABLE `f5_conference_reimbursements`
 -- Indexes for table `fdx_electronic_devices`
 --
 ALTER TABLE `fdx_electronic_devices`
-  ADD PRIMARY KEY (`Device_ID`),
-  ADD UNIQUE KEY `Application_ID` (`employee_code`);
+  ADD PRIMARY KEY (`Device_ID`);
 
 --
 -- Indexes for table `fdx_expenditure_main`
@@ -1252,7 +1252,7 @@ ALTER TABLE `f5_conference_reimbursements`
 -- AUTO_INCREMENT for table `fdx_electronic_devices`
 --
 ALTER TABLE `fdx_electronic_devices`
-  MODIFY `Device_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `Device_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `fdx_expenditure_main`

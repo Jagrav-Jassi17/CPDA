@@ -350,6 +350,7 @@ $result_f1_balance = $conn->query($sql_f1_balance);
                         <td><?= htmlspecialchars($row['employee_code']); ?></td>
                         <td>
                             <a href="balance_database.php?employee_code=<?= $row['employee_code']; ?>&role=<?= $_SESSION['role']; ?>" class="btn-edit" target="_blank">View</a>
+                            <a href="edit_balance.php?employee_code=<?= $row['employee_code']; ?>" class="btn-edit" >  Update</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

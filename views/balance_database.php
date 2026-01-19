@@ -241,14 +241,15 @@ if ($search_employee_code) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($results1 as $record): ?>
-                            <tr>
-                                    <td><?= $record['S_No']; ?></td>
-                                    <td><?= $record['Item_Description']; ?></td>
-                                    <td><?= $record['Date_of_Issue']; ?></td>
-                                    <td><?= number_format($record['Cost_at_Time_of_Issue'], 2); ?></td>
+                        <?php $sr = 1; ?>
+                        <?php foreach ($results1 as $record): ?> 
+                            <tr> 
+                                <td><?= $sr++; ?></td> <!-- dynamic serial number --> 
+                                <td><?= htmlspecialchars($record['Item_Description']); ?></td> 
+                                <td><?= $record['Date_of_Issue']; ?></td> 
+                                <td><?= number_format($record['Cost_at_Time_of_Issue'], 2); ?></td>                          
                             </tr>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>    
                     </tbody>
                 </table>
             </div>
