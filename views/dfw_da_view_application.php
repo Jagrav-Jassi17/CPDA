@@ -392,6 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <tr><th>Period of Event</th><td><?= htmlspecialchars($app['period_of_event']); ?></td></tr>
             <tr><th>Working Days Involved</th><td><?= htmlspecialchars($app['working_days_involved']); ?> days</td></tr>
             <tr><th>Venue of Event</th><td><?= htmlspecialchars($app['venue_of_event']); ?></td></tr>
+            <tr><th>Location</th><td><?= htmlspecialchars($app['location']); ?></td></tr>
         </table>
 
         <!-- Paper Details -->

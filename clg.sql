@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 19, 2026 at 10:16 PM
+-- Generation Time: Jan 29, 2026 at 05:42 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -100,7 +100,9 @@ INSERT INTO `application_timeline_messages` (`id`, `ref_number`, `message_sequen
 (20, 'CPDA-EVT-25-000002', 4, '[DFW-RECOMMENDED] kj', '1118', '1120', '2025-12-12 14:41:05'),
 (21, 'CPDA-EVT-25-000002', 5, '[Director-SEND-BACK] nm', '1120', '1118', '2025-12-12 14:58:16'),
 (22, 'CPDA-EVT-25-000002', 6, '[DFW-RECOMMENDED] 564', '1118', '1120', '2025-12-12 15:00:12'),
-(23, 'CPDA-EVT-25-000002', 7, '[Director-RECOMMENDED] kr mje', '1120', '1101', '2025-12-12 15:03:34');
+(23, 'CPDA-EVT-25-000002', 7, '[Director-RECOMMENDED] kr mje', '1120', '1101', '2025-12-12 15:03:34'),
+(24, 'CPDA-693D7814E167C', 1, '[APPROVED]  ', '1110', '1119', '2026-01-29 16:47:24'),
+(25, 'CPDA-EVT-25-000002', 8, '[Director-RECOMMENDED] ok', '1121', '1101', '2026-01-29 21:26:22');
 
 -- --------------------------------------------------------
 
@@ -265,7 +267,7 @@ INSERT INTO `cpda_applications` (`application_id`, `ref_number`, `dated`, `emplo
 (25, 'CPDA-6904F2D295F91', '2025-10-31', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'a', '', NULL, '', NULL, 'SUBMITTED', NULL, NULL, '2025-10-31 17:33:06', '2025-12-12 07:37:38', 'HOD_REVIEW'),
 (26, 'CPDA-693BB2420B501', '2025-12-12', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'k', 'h', NULL, 'g', NULL, 'SUBMITTED', NULL, NULL, '2025-12-12 06:12:18', '2025-12-12 07:37:45', 'HOD_REVIEW'),
 (27, 'CPDA-693BD2441D4B4', '2025-12-12', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'fin', 'sin', NULL, 'weroiewroi', NULL, 'DIRECTOR_APPROVED', NULL, NULL, '2025-12-12 08:28:52', '2025-12-12 08:56:14', 'COMPLETED'),
-(28, 'CPDA-693D7814E167C', '2025-12-13', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'important', '', NULL, '', NULL, 'SUBMITTED', NULL, NULL, '2025-12-13 14:28:36', '2025-12-13 14:28:36', 'HOD_REVIEW'),
+(28, 'CPDA-693D7814E167C', '2025-12-13', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'important', '', NULL, '', NULL, 'HOD_APPROVED', NULL, NULL, '2025-12-13 14:28:36', '2026-01-29 11:17:24', 'DA_REVIEW'),
 (29, 'CPDA-693D7BF0484F3', '2025-12-13', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'imp', '', NULL, '', NULL, 'SUBMITTED', NULL, NULL, '2025-12-13 14:45:04', '2025-12-13 14:45:04', 'HOD_REVIEW'),
 (30, 'CPDA-693D83E0EE42A', '2025-12-13', '1101', 'Dr. Priya Sharma', 'priya.sharma@nitj.ac.in', '987654321', 'faculty', 'Computer Science & Engg.', '13A2', '2012-09-01', 'imp', '', NULL, '', NULL, 'SUBMITTED', NULL, NULL, '2025-12-13 15:18:56', '2025-12-13 15:18:56', 'HOD_REVIEW');
 
@@ -343,6 +345,7 @@ CREATE TABLE `cpda_event_applications` (
   `designation_assistant_professor` tinyint(1) DEFAULT 0,
   `pay_level` varchar(20) NOT NULL,
   `department` varchar(255) NOT NULL,
+  `location` enum('national','international') NOT NULL DEFAULT 'national',
   `date_of_joining` date NOT NULL,
   `nature_of_event` varchar(255) NOT NULL,
   `title_of_event` text NOT NULL,
@@ -369,7 +372,7 @@ CREATE TABLE `cpda_event_applications` (
   `previous_event_name` text DEFAULT NULL,
   `previous_event_dates` varchar(255) DEFAULT NULL,
   `previous_event_venues` text DEFAULT NULL,
-  `application_status` enum('DRAFT','SUBMITTED','HOD_APPROVED','HOD_REJECTED','ACCOUNTS_APPROVED','ACCOUNTS_REJECTED','DFW_APPROVED','DFW_REJECTED','DIRECTOR_APPROVED','DIRECTOR_REJECTED','COMPLETED') DEFAULT 'DRAFT',
+  `application_status` enum('DRAFT','SUBMITTED','HOD_APPROVED','HOD_REJECTED','ACCOUNTS_APPROVED','ACCOUNTS_REJECTED','DFW_APPROVED','DFW_REJECTED','DIRECTOR_APPROVED','DIRECTOR_REJECTED','COMPLETED','CHAIRMAN_APPROVED','CHAIRMAN_REJECTED') DEFAULT 'DRAFT',
   `submission_date` datetime DEFAULT NULL,
   `last_updated` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `sanctioned_amount` decimal(10,2) DEFAULT NULL,
@@ -385,10 +388,11 @@ CREATE TABLE `cpda_event_applications` (
 -- Dumping data for table `cpda_event_applications`
 --
 
-INSERT INTO `cpda_event_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `date_of_joining`, `nature_of_event`, `title_of_event`, `period_of_event`, `working_days_involved`, `venue_of_event`, `paper_title`, `paper_authors`, `no_objection_details`, `abstract_attachment`, `expense_registration_fee`, `expense_visa_fee`, `expense_insurance_fee`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other_details`, `expense_other_amount`, `expense_total`, `event_during_holidays`, `institute_arrangement_attachment`, `attended_abroad_current_block`, `previous_event_name`, `previous_event_dates`, `previous_event_venues`, `application_status`, `submission_date`, `last_updated`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`, `current_stage`) VALUES
-(1, 'CPDA-EVT-25-000001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', '2012-09-01', 'd', 'f', '34', 3, 'f', '', '', '', NULL, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, 'YES', NULL, 'NO', '', '', '', 'HOD_APPROVED', '2025-10-31 18:06:48', '2025-12-12 13:10:51', NULL, 'PENDING', 0.00, NULL, '2025-10-31 12:36:48', '2025-12-12 07:40:51', 'DA_REVIEW'),
-(2, 'CPDA-EVT-25-000002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', '2012-09-01', 'harry', 'sik', 'js', 98, 'jk', 'sss', 's', 'ss', 'CPDA-EVT-25-000002_abstract_1761914346.pdf', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 6767676.00, 6767676.00, 'NO', 'CPDA-EVT-25-000002_arrangement_1761914346.pdf', 'YES', 'z', '1u', 'bat', 'DIRECTOR_APPROVED', '2025-10-31 18:09:06', '2025-12-12 15:03:34', 897.00, 'PENDING', 0.00, NULL, '2025-10-31 12:39:06', '2025-12-12 09:33:34', 'COMPLETED'),
-(3, 'CPDA-EVT-25-000003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 1, '13A2', 'Computer Science & Engg.', '2012-09-01', 'kjhh', 'mn', '5-6 dec', 5, 'mnb', 'hj', 'yugu', 'tyc', 'CPDA-EVT-25-000003_abstract_1765528308.pdf', 564.00, 64.00, 513.00, 98.00, 132.00, 87.00, 32.00, '', 65.00, 1555.00, 'YES', NULL, 'NO', 'nb', 'nm', '', 'COMPLETED', '2025-12-12 14:01:48', '2025-12-12 14:54:37', 7878.00, 'PENDING', 0.00, NULL, '2025-12-12 08:31:48', '2025-12-12 09:24:37', 'COMPLETED');
+INSERT INTO `cpda_event_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `location`, `date_of_joining`, `nature_of_event`, `title_of_event`, `period_of_event`, `working_days_involved`, `venue_of_event`, `paper_title`, `paper_authors`, `no_objection_details`, `abstract_attachment`, `expense_registration_fee`, `expense_visa_fee`, `expense_insurance_fee`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other_details`, `expense_other_amount`, `expense_total`, `event_during_holidays`, `institute_arrangement_attachment`, `attended_abroad_current_block`, `previous_event_name`, `previous_event_dates`, `previous_event_venues`, `application_status`, `submission_date`, `last_updated`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`, `current_stage`) VALUES
+(1, 'CPDA-EVT-25-000001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', 'international', '2012-09-01', 'd', 'f', '34', 3, 'f', '', '', '', NULL, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, 'YES', NULL, 'NO', '', '', '', 'HOD_APPROVED', '2025-10-31 18:06:48', '2026-01-29 21:07:54', NULL, 'PENDING', 0.00, NULL, '2025-10-31 12:36:48', '2026-01-29 15:37:54', 'DA_REVIEW'),
+(2, 'CPDA-EVT-25-000002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13A2', 'Computer Science & Engg.', 'international', '2012-09-01', 'harry', 'sik', 'js', 98, 'jk', 'sss', 's', 'ss', 'CPDA-EVT-25-000002_abstract_1761914346.pdf', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 6767676.00, 6767676.00, 'NO', 'CPDA-EVT-25-000002_arrangement_1761914346.pdf', 'YES', 'z', '1u', 'bat', 'CHAIRMAN_APPROVED', '2025-10-31 18:09:06', '2026-01-29 21:30:47', 897.00, 'PENDING', 0.00, NULL, '2025-10-31 12:39:06', '2026-01-29 16:00:47', 'COMPLETED'),
+(3, 'CPDA-EVT-25-000003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 1, '13A2', 'Computer Science & Engg.', 'national', '2012-09-01', 'kjhh', 'mn', '5-6 dec', 5, 'mnb', 'hj', 'yugu', 'tyc', 'CPDA-EVT-25-000003_abstract_1765528308.pdf', 564.00, 64.00, 513.00, 98.00, 132.00, 87.00, 32.00, '', 65.00, 1555.00, 'YES', NULL, 'NO', 'nb', 'nm', '', 'COMPLETED', '2025-12-12 14:01:48', '2025-12-12 14:54:37', 7878.00, 'PENDING', 0.00, NULL, '2025-12-12 08:31:48', '2025-12-12 09:24:37', 'COMPLETED'),
+(4, 'CPDA-EVT-26-000001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 1, '13A2', 'Computer Science & Engg.', 'international', '2012-09-01', 'hh', 'jj', '16-17 feb', 2, 'lp', '', '', '', NULL, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, 'YES', NULL, 'NO', '', '', '', 'SUBMITTED', '2026-01-29 21:37:50', '2026-01-29 21:37:50', NULL, 'PENDING', 0.00, NULL, '2026-01-29 16:07:50', '2026-01-29 16:07:50', 'HOD_REVIEW');
 
 -- --------------------------------------------------------
 
@@ -902,7 +906,8 @@ INSERT INTO `users` (`employee_code`, `name`, `email`, `password`, `role`, `depa
 (1117, 'Dr. Vikram Sharma', 'adfw@nitj.ac.in', 'Ad@Fw25', 'assoc_dean_fw', 'Faculty Welfare', '2025-10-23 21:02:16', '9876543217', '14A', '2022-05-01'),
 (1118, 'Prof. Sameer Roy', 'dean.fw@nitj.ac.in', 'Df!W25', 'dean_fw', 'Faculty Welfare', '2025-10-23 21:02:16', '9876543218', '15', '2008-07-01'),
 (1119, 'Ms. Geeta Kaur', 'da.fw@nitj.ac.in', 'da&fw25', 'dfw_da', 'Faculty Welfare', '2025-10-23 21:58:24', '9876543219', '9', '2022-05-01'),
-(1120, 'Prof. Anil Kohli', 'director@nitj.ac.in', 'Dir#2025', 'director', 'Administration', '2025-10-23 21:02:16', '9876543220', '15', '2005-01-15');
+(1120, 'Prof. Anil Kohli', 'director@nitj.ac.in', 'Dir#2025', 'director', 'Administration', '2025-10-23 21:02:16', '9876543220', '15', '2005-01-15'),
+(1121, 'Prof. Rajesh Mehta', 'chairman@nitj.ac.in', 'chair@2026', 'chairman', 'Administration', '2026-01-29 17:12:52', '9876543210', '15', '2020-01-15');
 
 --
 -- Indexes for dumped tables
@@ -1150,7 +1155,7 @@ ALTER TABLE `application_attachments`
 -- AUTO_INCREMENT for table `application_timeline_messages`
 --
 ALTER TABLE `application_timeline_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `approval_workflow`
@@ -1198,7 +1203,7 @@ ALTER TABLE `cpda_balance_snapshot`
 -- AUTO_INCREMENT for table `cpda_event_applications`
 --
 ALTER TABLE `cpda_event_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `cpda_event_attachments`

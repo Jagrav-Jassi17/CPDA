@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $period_of_event = $conn->real_escape_string($_POST['period_of_event']);
         $working_days_involved = intval($_POST['working_days_involved']);
         $venue_of_event = $conn->real_escape_string($_POST['venue_of_event']);
+        $location = $conn->real_escape_string($_POST['location']);
         
         // Paper details
         $paper_title = isset($_POST['paper_title']) ? $conn->real_escape_string($_POST['paper_title']) : '';
@@ -86,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             period_of_event,
             working_days_involved,
             venue_of_event,
+            location,
             paper_title,
             paper_authors,
             no_objection_details,
@@ -123,6 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             '$period_of_event',
             $working_days_involved,
             '$venue_of_event',
+            '$location',
             '$paper_title',
             '$paper_authors',
             '$no_objection_details',

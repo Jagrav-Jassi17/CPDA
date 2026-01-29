@@ -253,9 +253,17 @@ include_once '../config/db.php';
 
         <!-- 11. Venue -->
         <div class="form-row">
-            <div class="form-label">11. आयोजन स्थल / Venue of the event</div>
+            <div class="form-label">11a. आयोजन स्थल / Venue of the event</div>
             <div class="form-input">
                 <input type="text" name="venue_of_event" required>
+            </div>
+            <div class="form-input">
+                <label for="location">Event Category</label>
+                <select name="location" id="location" required>
+                    <option value="" disabled selected>Select Location Type</option>
+                    <option value="national">National</option>
+                    <option value="international">International</option>
+                </select>
             </div>
         </div>
 

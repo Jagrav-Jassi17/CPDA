@@ -2,53 +2,39 @@
 session_start();
 include_once '../config/db.php';
 
-// Verify user role is Asso dean
-if ($_SESSION['role'] !== 'assoc_dean_fw') {
+// Verify user role is DA (Personal Assistant)
+if ($_SESSION['role'] !== 'chairman') {
     header("Location: login.php");
     exit();
 }
 
 $app_id = $_GET['application_id'] ?? null;
-$type = $_GET['type'] ?? 'form1';
+$type = $_GET['type'] ?? 'form1'; // Default to form1 if not specified
 
 if (!$app_id) {
     die("Invalid application ID.");
 }
 
-/* -----------------------------------------------------------
-   LOAD APPLICATION DATA (FORM1 or EVENT)
------------------------------------------------------------ */
+// Determine which form to load based on type
 if ($type === 'event') {
+    // CPDA Event Application
     $stmt = $conn->prepare("SELECT * FROM cpda_event_applications WHERE application_id = ?");
     $stmt->bind_param("i", $app_id);
     $stmt->execute();
     $app = $stmt->get_result()->fetch_assoc();
-
-    if (!$app) die("Event application not found.");
-
-    // Attachments
+    
+    if (!$app) {
+        die("Event application not found.");
+    }
+    
+    
+    
+    // Fetch attachments for event application
     $stmt2 = $conn->prepare("SELECT * FROM cpda_event_attachments WHERE application_id = ?");
     $stmt2->bind_param("i", $app_id);
     $stmt2->execute();
     $attachments = $stmt2->get_result();
-
-} else {
-    $stmt = $conn->prepare("SELECT * FROM cpda_applications WHERE application_id = ?");
-    $stmt->bind_param("i", $app_id);
-    $stmt->execute();
-    $app = $stmt->get_result()->fetch_assoc();
-
-    if (!$app) die("Application not found.");
-
-    $stmt2 = $conn->prepare("SELECT * FROM professional_memberships WHERE application_id = ?");
-    $stmt2->bind_param("i", $app_id);
-    $stmt2->execute();
-    $memberships = $stmt2->get_result();
-
-    $stmt3 = $conn->prepare("SELECT * FROM consumable_items WHERE application_id = ?");
-    $stmt3->bind_param("i", $app_id);
-    $stmt3->execute();
-    $items = $stmt3->get_result();
+    
 }
 
 /* -----------------------------------------------------------
@@ -74,39 +60,35 @@ if (!empty($app['ref_number'])) {
     $stmt_last->close();
 }
 
-/* -----------------------------------------------------------
-   PROCESS ACTION SUBMISSION
------------------------------------------------------------ */
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-
     $action = $_POST['action'];
     $user_message = trim($_POST['new_message'] ?? '');
     $ref_number = $app['ref_number'];
-
-    $allowed_actions = ['recommend', 'not_recommend', 'send_back'];
-    if (!in_array($action, $allowed_actions)) die("Invalid action.");
-
-    // Update the status and current_stage as per action
-    if ($action === 'recommend') {
-        $new_status = 'HOD_APPROVED';
-        $new_stage = 'DFW_REVIEW'; // next step is Associate Dean review
-    } elseif ($action === 'not_recommend') {
-        $new_status = 'DFW_REJECTED';
-        $new_stage = 'COMPLETED';
-    } else if ($action === 'send_back') {
-        $new_status = 'HOD_APPROVED';
-        $new_stage = 'DA_REVIEW'; // send back to DA for correction
+    // Limit actions allowed
+    $allowed_actions = ['approve', 'not_recommend', 'send_back'];
+    if (!in_array($action, $allowed_actions)) {
+        die("Invalid action.");
     }
 
-    /* -------------------------------
+    // Update the status and current_stage as per action
+    if ($action === 'approve') {
+        $new_status = 'CHAIRMAN_APPROVED';
+        $new_stage = 'COMPLETED'; // next step is Associate Dean review
+    } elseif ($action === 'not_recommend') {
+        $new_status = 'CHAIRMAN_REJECTED';
+        $new_stage = 'COMPLETED';
+    } else if ($action === 'send_back') {
+        $new_status = 'DRAFT';
+        $new_stage = 'DFW_REVIEW'; // send back to DA for correction
+    }
+
+     /* -------------------------------
        Recipient finder logic
        Matches the HOD code pattern
     ------------------------------- */
 
     $stage_role_map = [
-        'DFW_REVIEW' => 'dean_fw',
-        'DA_REVIEW' => 'dfw_da'
+        'DFW_REVIEW' => 'dean_fw'
     ];
 
     $next_role = $stage_role_map[$new_stage] ?? null;
@@ -123,20 +105,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt_user->close();
     }
 
-    /* -------------------------------
-       Update main application table
-    ------------------------------- */
-    if ($type === 'form1') {
-        $sql = "UPDATE cpda_applications SET status = ?, current_stage = ?, updated_at = NOW() WHERE application_id = ?";
-    } else {
-        $sql = "UPDATE cpda_event_applications SET application_status = ?, current_stage = ?, updated_at = NOW() WHERE application_id = ?";
-    }
 
-    $stmt_up = $conn->prepare($sql);
-    $stmt_up->bind_param("ssi", $new_status, $new_stage, $app_id);
-    $stmt_up->execute();
-    $stmt_up->close();
+    $update_sql = "UPDATE cpda_event_applications SET application_status = ?, current_stage = ? WHERE application_id = ?";
+    $update_stmt = $conn->prepare($update_sql);
+    $update_stmt->bind_param("ssi", $new_status, $new_stage, $app_id); // Use $app_id
 
+    
     /* -------------------------------------------------------
        Insert Timeline Message
     ------------------------------------------------------- */
@@ -155,9 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // message prefix
         $prefix = match ($action) {
-            'recommend' => '[ASSoc dean-RECOMMENDED]',
-            'not_recommend' => '[ASSoc dean-REJECTED]',
-            default => '[ASSoc dean-SEND-BACK]'
+            'approve' => '[chairman-RECOMMENDED]',
+            'not_recommend' => '[chairman-REJECTED]',
+            default => '[chairman-SEND-BACK]'
         };
 
         $final_msg = $prefix . ' ' . $user_message;
@@ -173,14 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $stmt_msg->execute();
         $stmt_msg->close();
     }
-
-    /* -------------------------------------------------------
-       Redirect
-    ------------------------------------------------------- */
-    header("Location: assoc_dean_fw_dashboard.php?msg=Action completed");
-    exit();
+    
+    if ($update_stmt->execute()) {
+        header("Location: chairman_dashboard.php?msg=Action completed successfully");
+        exit();
+    } else {
+        $error = "Failed to update the status. Please try again.";
+    }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -346,10 +320,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } else {
             echo 'CPDA Form 1 Application Review';
         }
-        ?> – Associate Dean - Faculty Welfare
+        ?> – chairman
     </h2>
     
-    <p><a href="assoc_dean_fw_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
+    <p><a href="chairman_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
         <a href="balance_database.php?employee_code=<?= htmlspecialchars($app['employee_code']); ?>" target="_blank">💰 Balance Chart</a><br/>
 
     <?php if ($type === 'event'): ?>
@@ -463,106 +437,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <tr><td colspan="2"><em>No attachments uploaded</em></td></tr>
             <?php endif; ?>
         </table>
+        <h3>Dean's Recommendation</h3>
+                <table>
+                    <tr>
+                        <th>Amount Sanctioned (Rs.)</th>
+                        <td><?= number_format($app['sanctioned_amount'], 2); ?></td>
+                    </tr>
+                </table>
         <?php if ($last_message): ?>
             <div style="padding: 15px; background:#e6f0ff; border: 1px solid #3399ff; border-radius: 5px; margin-bottom: 20px;">
                 <strong>Last Message:</strong><br>
                 <p><?= nl2br(htmlspecialchars($last_message['message'])); ?></p>
                 <small>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> at <?= $last_message['message_time']; ?></small>
             </div>
-        <?php endif; ?>
-        <!-- asso dfw Action for Event Form -->
+        <?php endif; ?>        
+        <!-- chairman Action for Event Form -->
         <form method="POST" style="max-width: 800px;">
             <label for="action">Take Action:</label>
             <select name="action" id="action" required>
                 <option value="">-- Select --</option>
-                <option value="recommend">Recommend</option>
-                <option value="not_recommend">Not Recommend</option>
-                <option value="send_back">Send Back to HOD</option>
+                <option value="approve">approve</option>
+                <option value="not_recommend">Not approve</option>
+                <option value="send_back">Send Back to da</option>
             </select>
             <br>
             <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required placeholder="Enter your message here..."></textarea><br><br>
-            <button type="submit" class="btn-action btn-recommend">Submit</button>
+            <button type="submit" class="btn-action btn-approve">Submit</button>
         </form>
 
-    <?php else: ?>
-        <!-- FORM 1 APPLICATION (Purchase/Membership) - Keep existing code -->
-        
-        <h3>Applicant Details</h3>
-        <table>
-            <tr><th>Employee Code</th><td><?= htmlspecialchars($app['employee_code']); ?></td></tr>
-            <tr><th>Name</th><td><?= htmlspecialchars($app['faculty_name']); ?></td></tr>
-            <tr><th>Email</th><td><?= htmlspecialchars($app['email']); ?></td></tr>
-            <tr><th>Mobile</th><td><?= htmlspecialchars($app['mobile_number']); ?></td></tr>
-            <tr><th>Designation</th><td><?= htmlspecialchars($app['designation']); ?></td></tr>
-            <tr><th>Department</th><td><?= htmlspecialchars($app['department']); ?></td></tr>
-            <tr><th>Pay Level</th><td><?= htmlspecialchars($app['pay_level']); ?></td></tr>
-            <tr><th>Date of Joining</th><td><?= htmlspecialchars($app['date_of_joining']); ?></td></tr>
-            <tr><th>PDA Block</th><td><?= htmlspecialchars($app['pda_block_start_year']); ?> – <?= htmlspecialchars($app['pda_block_end_year']); ?></td></tr>
-        </table>
-
-        <h3>Purchase Details</h3>
-        <table>
-            <tr><th>Purpose of Purchase</th><td><?= nl2br(htmlspecialchars($app['purpose_of_purchase'])); ?></td></tr>
-            <tr><th>Technical Specification / Source</th><td><?= nl2br(htmlspecialchars($app['technical_specification'])); ?></td></tr>
-            <tr><th>Remarks</th><td><?= nl2br(htmlspecialchars($app['remarks'])); ?></td></tr>
-        </table>
-
-        <h3>Professional Memberships</h3>
-        <table>
-            <tr class="section-header"><th>Name of Professional Body</th><th>Amount</th><th>Type</th></tr>
-            <?php if ($memberships->num_rows > 0): ?>
-                <?php while ($row = $memberships->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['professional_body_name']); ?></td>
-                        <td>₹<?= number_format($row['amount'], 2); ?></td>
-                        <td><?= htmlspecialchars($row['membership_type']); ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr><td colspan="3"><em>No memberships listed.</em></td></tr>
-            <?php endif; ?>
-        </table>
-
-        <h3>Consumable / Item Details</h3>
-        <table>
-            <tr class="section-header"><th>Serial No.</th><th>Article Name</th><th>Amount</th><th>Category</th></tr>
-            <?php if ($items->num_rows > 0): ?>
-                <?php while ($row = $items->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['serial_number']); ?></td>
-                        <td><?= htmlspecialchars($row['article_name']); ?></td>
-                        <td>₹<?= number_format($row['amount'], 2); ?></td>
-                        <td><?= htmlspecialchars($row['item_category']); ?></td>
-                    </tr>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr><td colspan="4"><em>No consumable items listed.</em></td></tr>
-            <?php endif; ?>
-        </table>
-        <?php if ($last_message): ?>
-            <div style="padding: 15px; background:#e6f0ff; border: 1px solid #3399ff; border-radius: 5px; margin-bottom: 20px;">
-                <strong>Last Message:</strong><br>
-                <p><?= nl2br(htmlspecialchars($last_message['message'])); ?></p>
-                <small>Sent by Employee ID: <?= htmlspecialchars($last_message['sender_identifier']); ?> at <?= $last_message['message_time']; ?></small>
-            </div>
-        <?php endif; ?>
-        <!-- asso dfw Action for Form 1 -->
-        <form method="POST" style="max-width: 800px;">
-            <label for="action">Take Action:</label>
-            <select name="action" id="action" required>
-                <option value="">-- Select --</option>
-                <option value="recommend">Recommend</option>
-                <option value="not_recommend">Not Recommend</option>
-                <option value="send_back">Send Back to HOD</option>
-            </select>
-            <br>
-            <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required placeholder="Enter your message here..."></textarea><br><br>
-            <button type="submit" class="btn-action btn-recommend">Submit</button>
-        </form>
-
+    
     <?php endif; ?>
 
-    <p><a href="assoc_dean_fw_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
+    <p><a href="chairman_dashboard.php" class="btn-back">⬅ Back to Dashboard</a></p>
 </div>
 
 </body>

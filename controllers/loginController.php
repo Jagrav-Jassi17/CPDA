@@ -51,6 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'director':
                 header("Location: ../views/director_dashboard.php");
                 break;
+            case 'chairman':
+                header("Location: ../views/chairman_dashboard.php");
+                break;
             default:
                 echo "Invalid user role!";
         }
