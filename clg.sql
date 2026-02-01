@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 01, 2026 at 07:24 PM
+-- Generation Time: Feb 01, 2026 at 08:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -104,7 +104,9 @@ INSERT INTO `application_timeline_messages` (`id`, `ref_number`, `message_sequen
 (24, 'F4/2026/00001', 1, '[APPROVED] ok', '1110', '1114', '2026-02-01 21:29:57'),
 (25, 'F4/2026/00002', 1, '[APPROVED] ok', '1110', '1114', '2026-02-01 21:43:21'),
 (26, 'F4/2026/00003', 1, '[APPROVED] ok', '1110', '1114', '2026-02-01 21:56:55'),
-(27, 'F4/2026/00004', 1, '[APPROVED] ok', '1110', '1114', '2026-02-01 22:11:36');
+(27, 'F4/2026/00004', 1, '[APPROVED] ok', '1110', '1114', '2026-02-01 22:11:36'),
+(28, 'CPDA/F5/2026/697fa0ee7bbb1', 1, '[APPROVED] ok', '1110', '1114', '2026-02-02 00:23:50'),
+(29, 'CPDA/F5/2026/697fa78a08979', 1, '[APPROVED] ok', '1110', '1114', '2026-02-02 00:51:10');
 
 -- --------------------------------------------------------
 
@@ -306,7 +308,7 @@ CREATE TABLE `cpda_balance_master` (
 --
 
 INSERT INTO `cpda_balance_master` (`faculty_id`, `total_allocated`, `utilized_amount`, `updated_at`) VALUES
-('1101', 300000.00, 73542.00, '2026-02-01 16:43:16');
+('1101', 300000.00, 88118.00, '2026-02-01 19:21:41');
 
 -- --------------------------------------------------------
 
@@ -615,7 +617,9 @@ CREATE TABLE `f5_attachments` (
 
 INSERT INTO `f5_attachments` (`id`, `reimbursement_id`, `attachment_type`, `file_name`, `file_path`, `file_size`, `file_type`, `description`, `uploaded_at`) VALUES
 (2, 2, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/2_1762268402_0.pdf', 444303, 'application/pdf', '', '2025-11-04 15:00:02'),
-(3, 3, 'REGISTRATION_RECEIPT', 'F-5.pdf', '../uploads/f5_attachments/3_1765528408_0.pdf', 298045, 'application/pdf', '', '2025-12-12 08:33:28');
+(3, 3, 'REGISTRATION_RECEIPT', 'F-5.pdf', '../uploads/f5_attachments/3_1765528408_0.pdf', 298045, 'application/pdf', '', '2025-12-12 08:33:28'),
+(4, 4, 'FLIGHT_TICKET', 'pxfuel.jpg', '../uploads/f5_attachments/4_1769971950_0.jpg', 2120091, 'image/jpeg', '', '2026-02-01 18:52:30'),
+(5, 5, 'REGISTRATION_RECEIPT', 'pxfuel.jpg', '../uploads/f5_attachments/5_1769973642_0.jpg', 2120091, 'image/jpeg', '', '2026-02-01 19:20:42');
 
 -- --------------------------------------------------------
 
@@ -647,6 +651,7 @@ CREATE TABLE `f5_conference_reimbursements` (
   `expense_other` decimal(10,2) DEFAULT 0.00,
   `expense_other_description` text DEFAULT NULL,
   `total_amount` decimal(10,2) NOT NULL,
+  `sanctioned_amount` decimal(10,2) DEFAULT 0.00,
   `remarks` text DEFAULT NULL,
   `status` enum('PENDING','HOD_APPROVED','HOD_REJECTED','ACCOUNTS_APPROVED','ACCOUNTS_REJECTED','COMPLETED') DEFAULT 'PENDING',
   `hod_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
@@ -666,9 +671,11 @@ CREATE TABLE `f5_conference_reimbursements` (
 -- Dumping data for table `f5_conference_reimbursements`
 --
 
-INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation`, `pay_level`, `department`, `activity_nature`, `activity_name`, `activity_start_date`, `activity_end_date`, `activity_venue`, `location_type`, `expense_registration`, `expense_visa`, `expense_insurance`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other`, `expense_other_description`, `total_amount`, `remarks`, `status`, `hod_status`, `hod_approved_by`, `hod_approved_at`, `hod_comments`, `accounts_status`, `accounts_approved_by`, `accounts_approved_at`, `accounts_comments`, `created_at`, `updated_at`, `balance_applied`) VALUES
-(2, 'CPDA/F5/2025/690a14f2c1de0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'Workshop', 'dsf', '2025-11-28', '2025-11-29', 'asd', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, '', 'ACCOUNTS_REJECTED', 'APPROVED', '1110', '2025-11-04 20:55:19', 'sd', 'REJECTED', '1114', '2025-11-04 20:58:29', 'd', '2025-11-04 15:00:02', '2025-11-04 15:28:29', 0),
-(3, 'CPDA/F5/2025/693bd358c3bbb', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'oiuu', '2025-12-04', '2025-12-10', 'n', 'India', 650.00, 8.00, 45.00, 89.00, 78.00, 21.00, 78.00, 98.00, '', 1067.00, '564', 'HOD_APPROVED', 'APPROVED', '1110', '2025-12-12 14:07:20', '98645-+-+', 'PENDING', NULL, NULL, NULL, '2025-12-12 08:33:28', '2025-12-12 08:37:20', 0);
+INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation`, `pay_level`, `department`, `activity_nature`, `activity_name`, `activity_start_date`, `activity_end_date`, `activity_venue`, `location_type`, `expense_registration`, `expense_visa`, `expense_insurance`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other`, `expense_other_description`, `total_amount`, `sanctioned_amount`, `remarks`, `status`, `hod_status`, `hod_approved_by`, `hod_approved_at`, `hod_comments`, `accounts_status`, `accounts_approved_by`, `accounts_approved_at`, `accounts_comments`, `created_at`, `updated_at`, `balance_applied`) VALUES
+(2, 'CPDA/F5/2025/690a14f2c1de0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'Workshop', 'dsf', '2025-11-28', '2025-11-29', 'asd', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, '', 'ACCOUNTS_REJECTED', 'APPROVED', '1110', '2025-11-04 20:55:19', 'sd', 'REJECTED', '1114', '2025-11-04 20:58:29', 'd', '2025-11-04 15:00:02', '2025-11-04 15:28:29', 0),
+(3, 'CPDA/F5/2025/693bd358c3bbb', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'oiuu', '2025-12-04', '2025-12-10', 'n', 'India', 650.00, 8.00, 45.00, 89.00, 78.00, 21.00, 78.00, 98.00, '', 1067.00, 0.00, '564', 'HOD_APPROVED', 'APPROVED', '1110', '2025-12-12 14:07:20', '98645-+-+', 'PENDING', NULL, NULL, NULL, '2025-12-12 08:33:28', '2025-12-12 08:37:20', 0),
+(4, 'CPDA/F5/2026/697fa0ee7bbb1', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'ef3r', '2026-01-07', '2026-01-22', 'delhi', 'India', 23.00, 24.00, 444.00, 4444.00, 0.00, 0.00, 0.00, 3333.00, '', 8268.00, 8268.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-02 00:23:50', 'ok', 'APPROVED', '1114', '2026-02-02 00:49:10', NULL, '2026-02-01 18:52:30', '2026-02-01 19:19:10', 1),
+(5, 'CPDA/F5/2026/697fa78a08979', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'rfrw', '2026-02-01', '2026-02-02', 'delhi', 'India', 444.00, 4444.00, 444.00, 444.00, 44.00, 44.00, 0.00, 444.00, '', 6308.00, 6308.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-02 00:51:10', 'ok', 'APPROVED', '1114', '2026-02-02 00:51:41', NULL, '2026-02-01 19:20:42', '2026-02-01 19:21:41', 1);
 
 -- --------------------------------------------------------
 
@@ -1175,7 +1182,7 @@ ALTER TABLE `application_attachments`
 -- AUTO_INCREMENT for table `application_timeline_messages`
 --
 ALTER TABLE `application_timeline_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `approval_workflow`
@@ -1265,13 +1272,13 @@ ALTER TABLE `f4_reimbursement_attachments`
 -- AUTO_INCREMENT for table `f5_attachments`
 --
 ALTER TABLE `f5_attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `f5_conference_reimbursements`
 --
 ALTER TABLE `f5_conference_reimbursements`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `fdx_electronic_devices`
