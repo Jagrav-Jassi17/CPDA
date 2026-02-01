@@ -17,7 +17,10 @@ class BalanceViewController
        ===================================================== */
     public function getBalanceByForm(string $formType, int $formId): array
     {
-        $approvedBalance = $this->getCurrentApprovedBalance();
+        // Faculty-specific approved balance
+        $facultyId = $_SESSION['employee_code'];
+        $approvedBalance = $this->getCurrentApprovedBalance($facultyId);
+
         $amount = $this->getApplicationAmount($formType, $formId);
 
         return [
@@ -34,6 +37,7 @@ class BalanceViewController
        ===================================================== */
     private function getApplicationAmount(string $formType, int $formId): float
     {
+        // F1 – CPDA Purchase & Membership
         if ($formType === 'F1') {
             $stmt = $this->conn->prepare("
                 SELECT 
@@ -45,15 +49,28 @@ class BalanceViewController
             return (float)$stmt->get_result()->fetch_assoc()['total'];
         }
 
-        if (in_array($formType, ['F4','F5'])) {
+        // F4 – Reimbursement (Purchase & Membership)
+        if ($formType === 'F4') {
             $stmt = $this->conn->prepare("
-                SELECT IFNULL(total_amount,0)
+                SELECT IFNULL(total_amount,0) AS total
                 FROM f4_reimbursement_applications
                 WHERE application_id = ?
             ");
             $stmt->bind_param("i", $formId);
             $stmt->execute();
-            return (float)$stmt->get_result()->fetch_assoc()['total_amount'];
+            return (float)$stmt->get_result()->fetch_assoc()['total'];
+        }
+
+        // F5 – Conference Reimbursement
+        if ($formType === 'F5') {
+            $stmt = $this->conn->prepare("
+                SELECT IFNULL(total_amount,0) AS total
+                FROM f5_conference_reimbursements
+                WHERE application_id = ?
+            ");
+            $stmt->bind_param("i", $formId);
+            $stmt->execute();
+            return (float)$stmt->get_result()->fetch_assoc()['total'];
         }
 
         return 0.0;
@@ -65,18 +82,16 @@ class BalanceViewController
     }
 
     /* =====================================================
-       APPROVED CPDA BALANCE (ONLY F4 / F5)
+       APPROVED CPDA BALANCE (SOURCE OF TRUTH)
        ===================================================== */
-    public function getCurrentApprovedBalance(): float
+    public function getCurrentApprovedBalance(string $facultyId): float
     {
         $stmt = $this->conn->prepare("
-            SELECT approved_balance
-            FROM cpda_balance_snapshot
-            WHERE status = 'APPROVED'
-              AND form_type IN ('F4','F5')
-            ORDER BY approved_at DESC
-            LIMIT 1
+            SELECT total_allocated - utilized_amount AS approved_balance
+            FROM cpda_balance_master
+            WHERE faculty_id = ?
         ");
+        $stmt->bind_param("s", $facultyId);
         $stmt->execute();
         $res = $stmt->get_result();
 
@@ -84,11 +99,12 @@ class BalanceViewController
             return (float)$res->fetch_assoc()['approved_balance'];
         }
 
+        // Default CPDA if no record exists
         return $this->TOTAL_CPDA;
     }
 
     /* =====================================================
-       APPROVE BALANCE (ACCOUNTS – F4 / F5 ONLY)
+       SNAPSHOT (OPTIONAL – FOR AUDIT / HISTORY)
        ===================================================== */
     public function approveBalanceForApplication(
         string $formType,
@@ -119,7 +135,7 @@ class BalanceViewController
     }
 
     /* =====================================================
-       ACCOUNTS DECISION (APPROVE / REJECT / REVERT)
+       ACCOUNTS DECISION (LEGACY – SAFE)
        ===================================================== */
     public function updateAccountsDecision(
         int $formId,

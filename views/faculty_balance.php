@@ -16,7 +16,8 @@ $balanceCtrl = new BalanceViewController();
 | 1. Current Approved Balance (GLOBAL SOURCE OF TRUTH)
 |--------------------------------------------------------------------------
 */
-$overallRemaining = $balanceCtrl->getCurrentApprovedBalance();
+$overallRemaining = $balanceCtrl->getCurrentApprovedBalance($employee_code);
+
 
 /*
 |--------------------------------------------------------------------------
