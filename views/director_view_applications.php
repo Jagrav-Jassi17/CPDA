@@ -97,7 +97,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 
     // Update the status and current_stage as per action
-    if ($action === 'approve') {
+    if ($action === 'approve'&& $type === 'event' && $app['location'] === 'international') {
+        $new_status = 'DIRECTOR_APPROVED';
+        $new_stage = 'CHAIRMAN_REVIEW';
+    } elseif ($action === 'approve') {
         $new_status = 'DIRECTOR_APPROVED';
         $new_stage = 'COMPLETED'; // next step is Associate Dean review
     } elseif ($action === 'not_recommend') {
@@ -114,7 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     ------------------------------- */
 
     $stage_role_map = [
-        'DFW_REVIEW' => 'dean_fw'
+        'DFW_REVIEW' => 'dean_fw',
+        'CHAIRMAN_REVIEW' => 'chairman'
     ];
 
     $next_role = $stage_role_map[$new_stage] ?? null;
@@ -589,7 +593,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <p><em>No recommendation amount entered by Dean Faculty Welfare.</em></p>
             <?php endif; ?>
             <br>
-            <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required placeholder="Enter your message here..."></textarea><br><br>
+            <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required  placeholder="Enter your message here..."></textarea><br><br>
             <button type="submit" class="btn-action btn-approve">Submit</button>
         </form>
 

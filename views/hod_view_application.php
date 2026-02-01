@@ -774,7 +774,7 @@ if (!empty($app['ref_number'])) {
                 <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
                 
                 <label><strong>HOD Comments / Remarks:</strong></label><br>
-                <textarea name="hod_remarks" rows="5" placeholder="Enter your comments or recommendations here..."></textarea>
+                <textarea name="hod_remarks" rows="5" required placeholder="Enter your comments or recommendations here..."></textarea>
                 <br><br>
                 
                 <button type="submit" name="action" value="approve" class="btn-approve">

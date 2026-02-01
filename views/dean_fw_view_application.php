@@ -112,7 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     $stage_role_map = [
         'DIRECTOR_REVIEW' => 'director',
-        'ASS_REVIEW' => 'assoc_dean_fw'
+        'ASS_REVIEW' => 'assoc_dean_fw',
+        'COMPLETED' => 'faculty'
     ];
 
     $next_role = $stage_role_map[$new_stage] ?? null;
@@ -568,7 +569,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 <br>
             </div>
             <br>
-            <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required placeholder="Enter your message here..."></textarea><br><br>
+            <textarea id="new_message" name="new_message" rows="4" style="width:100%;" required  placeholder="Enter your message here..."></textarea><br><br>
             <button type="submit" class="btn-action btn-recommend">Submit</button>
         </form>
 

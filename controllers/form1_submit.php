@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             (ref_number, dated, employee_code, faculty_name, email, mobile_number,
              designation, department, pay_level, date_of_joining,
              purpose_of_purchase, technical_specification, remarks,
-             status, current_stage, accounts_status)
-            VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'SUBMITTED', 'HOD_REVIEW', 'PENDING')
+             status, current_stage)
+            VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'SUBMITTED', 'HOD_REVIEW')
         ");
 
         $stmt->bind_param(
