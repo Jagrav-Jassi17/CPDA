@@ -262,7 +262,7 @@ if ($type === 'f5') {
         <!-- AR Final Approval Action for F-5 -->
         <div class="button-group">
             <h3 style="margin-top: 0;">Assistant Registrar - Final Approval Decision</h3>
-            <form action="../controllers/ARF4Controller.php" method="POST">
+            <form action="../controllers/F5AccountsController.php" method="POST">
                 <input type="hidden" name="application_id" value="<?= $app['application_id']; ?>">
                 
                 <label><strong>Sanctioned Amount (₹):</strong></label><br>

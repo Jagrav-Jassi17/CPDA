@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+    
     $applicationId = intval($_POST['Application_ID']);
     $type = $_POST['type'] ?? 'cpda'; // cpda | reimbursement
 
