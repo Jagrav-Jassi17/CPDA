@@ -245,12 +245,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         $conn->rollback();
         $_SESSION['error_message'] = "Error submitting application: " . $e->getMessage();
-        header("Location: ../views/cpda_event_form.php");
+        header("Location: ../views/form2_faculty.php");
         exit();
     }
     
 } else {
-    header("Location: ../views/cpda_event_form.php");
+    header("Location: ../views/form2_faculty.php");
     exit();
 }
 ?>

@@ -172,7 +172,7 @@ if ($search_employee_code) {
                             </tr>
                             <tr>
                                     <td >3</td>
-                                    <td colspan="7">National/International Conferences</td>
+                                    <td colspan="7">Contingent Expenses</td>
                             </tr>
                             <tr>
                                     <td >a.</td>
