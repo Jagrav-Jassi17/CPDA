@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 03, 2026 at 08:22 AM
+-- Generation Time: Feb 03, 2026 at 07:10 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -554,24 +554,25 @@ CREATE TABLE `f4_reimbursement_applications` (
   `disbursed_amount` decimal(10,2) DEFAULT 0.00,
   `disbursement_date` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `balance_applied` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `f4_reimbursement_applications`
 --
 
-INSERT INTO `f4_reimbursement_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `total_amount`, `expense_books`, `expense_stationary`, `expense_patent`, `expense_computer_consumables`, `expense_consumables`, `expense_synthesis_analysis`, `remarks`, `application_status`, `submission_date`, `last_updated`, `hod_approval_status`, `hod_approval_date`, `hod_remarks`, `hod_approved_by`, `ar_approval_status`, `ar_approval_date`, `ar_remarks`, `ar_approved_by`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`) VALUES
-(1, 'F4/2025/00001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43588.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:48:37', '2025-10-31 22:48:37', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:18:37', '2025-10-31 17:18:37'),
-(2, 'F4/2025/00002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 44341.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:51:45', '2025-11-04 20:50:39', 'APPROVED', '2025-11-04 20:48:51', 'd', '1110', 'APPROVED', '2025-11-04 20:50:39', 'hj', '1114', 44341.00, 'PENDING', 0.00, NULL, '2025-10-31 17:21:45', '2025-11-04 15:20:39'),
-(3, 'F4/2025/00003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:52:32', '2025-10-31 23:55:00', 'APPROVED', '2025-10-31 23:30:41', 'm', '1110', 'APPROVED', '2025-10-31 23:55:00', 'okk', '1114', 43230.00, 'PENDING', 0.00, NULL, '2025-10-31 17:22:32', '2025-10-31 18:25:00'),
-(4, 'F4/2025/00004', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43263.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:52:49', '2025-10-31 22:52:49', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:22:49', '2025-10-31 17:22:49'),
-(5, 'F4/2025/00005', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_REJECTED', '2025-10-31 22:53:17', '2025-10-31 23:55:56', 'APPROVED', '2025-10-31 23:30:27', 'm', '1110', 'REJECTED', '2025-10-31 23:55:56', 'z', '1114', 0.00, 'PENDING', 0.00, NULL, '2025-10-31 17:23:17', '2025-10-31 18:25:56'),
-(6, 'F4/2025/00006', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 'SUBMITTED', '2025-10-31 23:02:55', '2025-10-31 23:02:55', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:32:55', '2025-10-31 17:32:55'),
-(7, 'F4/2025/00007', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 247.00, 75.00, 98.00, 32.00, 0.00, 32.00, 10.00, 'mnb', 'HOD_APPROVED', '2025-12-12 14:02:27', '2025-12-12 14:07:11', 'APPROVED', '2025-12-12 14:07:11', '65645654', '1110', 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-12-12 08:32:27', '2025-12-12 08:37:11'),
-(8, 'F4/2026/00001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 1015.00, 263.00, 3.00, 456.00, 2.00, 123.00, 123.00, '', 'AR_APPROVED', '2026-02-01 20:22:17', '2026-02-01 20:27:39', 'APPROVED', '2026-02-01 20:26:39', 'vbn', '1110', 'APPROVED', '2026-02-01 20:27:39', 'vbn', '1114', 1015.00, 'PENDING', 0.00, NULL, '2026-02-01 14:52:17', '2026-02-01 14:57:39'),
-(9, 'F4/2026/00002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 7329.00, 654.00, 656.00, 656.00, 65.00, 656.00, 98.00, '', 'HOD_APPROVED', '2026-02-01 23:13:59', '2026-02-01 23:16:08', 'APPROVED', '2026-02-01 23:16:08', 'nnm', '1110', 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2026-02-01 17:43:59', '2026-02-01 17:46:08'),
-(10, 'F4/2026/00003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 455.00, 0.00, 0.00, 0.00, 0.00, 0.00, 455.00, '', 'SUBMITTED', '2026-02-02 14:37:15', '2026-02-02 14:37:15', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2026-02-02 09:07:15', '2026-02-02 09:07:15');
+INSERT INTO `f4_reimbursement_applications` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation_hag`, `designation_professor`, `designation_associate_professor`, `designation_assistant_professor`, `pay_level`, `department`, `total_amount`, `expense_books`, `expense_stationary`, `expense_patent`, `expense_computer_consumables`, `expense_consumables`, `expense_synthesis_analysis`, `remarks`, `application_status`, `submission_date`, `last_updated`, `hod_approval_status`, `hod_approval_date`, `hod_remarks`, `hod_approved_by`, `ar_approval_status`, `ar_approval_date`, `ar_remarks`, `ar_approved_by`, `sanctioned_amount`, `disbursement_status`, `disbursed_amount`, `disbursement_date`, `created_at`, `updated_at`, `balance_applied`) VALUES
+(1, 'F4/2025/00001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43588.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:48:37', '2025-10-31 22:48:37', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:18:37', '2025-10-31 17:18:37', 0),
+(2, 'F4/2025/00002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 44341.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:51:45', '2025-11-04 20:50:39', 'APPROVED', '2025-11-04 20:48:51', 'd', '1110', 'APPROVED', '2025-11-04 20:50:39', 'hj', '1114', 44341.00, 'PENDING', 0.00, NULL, '2025-10-31 17:21:45', '2025-11-04 15:20:39', 0),
+(3, 'F4/2025/00003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_APPROVED', '2025-10-31 22:52:32', '2025-10-31 23:55:00', 'APPROVED', '2025-10-31 23:30:41', 'm', '1110', 'APPROVED', '2025-10-31 23:55:00', 'okk', '1114', 43230.00, 'PENDING', 0.00, NULL, '2025-10-31 17:22:32', '2025-10-31 18:25:00', 0),
+(4, 'F4/2025/00004', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43263.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'SUBMITTED', '2025-10-31 22:52:49', '2025-10-31 22:52:49', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:22:49', '2025-10-31 17:22:49', 0),
+(5, 'F4/2025/00005', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 43230.00, 340.00, 550.00, 33330.00, 230.00, 3240.00, 5540.00, '', 'AR_REJECTED', '2025-10-31 22:53:17', '2025-10-31 23:55:56', 'APPROVED', '2025-10-31 23:30:27', 'm', '1110', 'REJECTED', '2025-10-31 23:55:56', 'z', '1114', 0.00, 'PENDING', 0.00, NULL, '2025-10-31 17:23:17', '2025-10-31 18:25:56', 0),
+(6, 'F4/2025/00006', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 'SUBMITTED', '2025-10-31 23:02:55', '2025-10-31 23:02:55', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-10-31 17:32:55', '2025-10-31 17:32:55', 0),
+(7, 'F4/2025/00007', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 247.00, 75.00, 98.00, 32.00, 0.00, 32.00, 10.00, 'mnb', 'HOD_APPROVED', '2025-12-12 14:02:27', '2025-12-12 14:07:11', 'APPROVED', '2025-12-12 14:07:11', '65645654', '1110', 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2025-12-12 08:32:27', '2025-12-12 08:37:11', 0),
+(8, 'F4/2026/00001', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 1015.00, 263.00, 3.00, 456.00, 2.00, 123.00, 123.00, '', 'AR_APPROVED', '2026-02-01 20:22:17', '2026-02-01 20:27:39', 'APPROVED', '2026-02-01 20:26:39', 'vbn', '1110', 'APPROVED', '2026-02-01 20:27:39', 'vbn', '1114', 1015.00, 'PENDING', 0.00, NULL, '2026-02-01 14:52:17', '2026-02-01 14:57:39', 0),
+(9, 'F4/2026/00002', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 7329.00, 654.00, 656.00, 656.00, 65.00, 656.00, 98.00, '', 'HOD_APPROVED', '2026-02-01 23:13:59', '2026-02-01 23:16:08', 'APPROVED', '2026-02-01 23:16:08', 'nnm', '1110', 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2026-02-01 17:43:59', '2026-02-01 17:46:08', 0),
+(10, 'F4/2026/00003', 1101, 'Dr. Priya Sharma', 0, 0, 0, 0, '13', 'Computer Science & Engg.', 455.00, 0.00, 0.00, 0.00, 0.00, 0.00, 455.00, '', 'SUBMITTED', '2026-02-02 14:37:15', '2026-02-02 14:37:15', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, NULL, 'PENDING', 0.00, NULL, '2026-02-02 09:07:15', '2026-02-02 09:07:15', 0);
 
 -- --------------------------------------------------------
 
@@ -629,7 +630,8 @@ INSERT INTO `f5_attachments` (`id`, `reimbursement_id`, `attachment_type`, `file
 (2, 2, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/2_1762268402_0.pdf', 444303, 'application/pdf', '', '2025-11-04 15:00:02'),
 (3, 3, 'REGISTRATION_RECEIPT', 'F-5.pdf', '../uploads/f5_attachments/3_1765528408_0.pdf', 298045, 'application/pdf', '', '2025-12-12 08:33:28'),
 (4, 4, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/4_1769957764_0.pdf', 444303, 'application/pdf', 'bvcxz', '2026-02-01 14:56:04'),
-(5, 5, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/5_1769967938_0.pdf', 444303, 'application/pdf', 'nn', '2026-02-01 17:45:38');
+(5, 5, 'REGISTRATION_RECEIPT', 'F-2.pdf', '../uploads/f5_attachments/5_1769967938_0.pdf', 444303, 'application/pdf', 'nn', '2026-02-01 17:45:38'),
+(6, 6, 'REGISTRATION_RECEIPT', 'pxfuel.jpg', '../uploads/f5_attachments/6_1770141595_0.jpg', 2120091, 'image/jpeg', '', '2026-02-03 17:59:55');
 
 -- --------------------------------------------------------
 
@@ -661,6 +663,7 @@ CREATE TABLE `f5_conference_reimbursements` (
   `expense_other` decimal(10,2) DEFAULT 0.00,
   `expense_other_description` text DEFAULT NULL,
   `total_amount` decimal(10,2) NOT NULL,
+  `sanctioned_amount` decimal(10,2) DEFAULT 0.00,
   `remarks` text DEFAULT NULL,
   `status` enum('PENDING','HOD_APPROVED','HOD_REJECTED','ACCOUNTS_APPROVED','ACCOUNTS_REJECTED','COMPLETED') DEFAULT 'PENDING',
   `hod_status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
@@ -672,18 +675,20 @@ CREATE TABLE `f5_conference_reimbursements` (
   `accounts_approved_at` datetime DEFAULT NULL,
   `accounts_comments` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `balance_applied` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `f5_conference_reimbursements`
 --
 
-INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation`, `pay_level`, `department`, `activity_nature`, `activity_name`, `activity_start_date`, `activity_end_date`, `activity_venue`, `location_type`, `expense_registration`, `expense_visa`, `expense_insurance`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other`, `expense_other_description`, `total_amount`, `remarks`, `status`, `hod_status`, `hod_approved_by`, `hod_approved_at`, `hod_comments`, `accounts_status`, `accounts_approved_by`, `accounts_approved_at`, `accounts_comments`, `created_at`, `updated_at`) VALUES
-(2, 'CPDA/F5/2025/690a14f2c1de0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'Workshop', 'dsf', '2025-11-28', '2025-11-29', 'asd', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, '', 'ACCOUNTS_REJECTED', 'APPROVED', '1110', '2025-11-04 20:55:19', 'sd', 'REJECTED', '1114', '2025-11-04 20:58:29', 'd', '2025-11-04 15:00:02', '2025-11-04 15:28:29'),
-(3, 'CPDA/F5/2025/693bd358c3bbb', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'oiuu', '2025-12-04', '2025-12-10', 'n', 'India', 650.00, 8.00, 45.00, 89.00, 78.00, 21.00, 78.00, 98.00, '', 1067.00, '564', 'HOD_APPROVED', 'APPROVED', '1110', '2025-12-12 14:07:20', '98645-+-+', 'PENDING', NULL, NULL, NULL, '2025-12-12 08:33:28', '2025-12-12 08:37:20'),
-(4, 'CPDA/F5/2026/697f6984ca639', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'fdz', '2026-02-01', '2026-02-08', 'trfds', 'Abroad', 23.00, 524.00, 543.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 1090.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-01 20:26:46', 'xcvb', 'PENDING', '1114', '2026-02-01 20:27:50', 'vnj', '2026-02-01 14:56:04', '2026-02-01 17:18:07'),
-(5, 'CPDA/F5/2026/697f91427d5b0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'nn', '2026-02-01', '2026-02-03', 'nm', 'India', 4555.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 4555.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-01 23:16:01', ' ', 'PENDING', NULL, NULL, NULL, '2026-02-01 17:45:38', '2026-02-01 17:46:01');
+INSERT INTO `f5_conference_reimbursements` (`application_id`, `ref_number`, `employee_code`, `faculty_name`, `designation`, `pay_level`, `department`, `activity_nature`, `activity_name`, `activity_start_date`, `activity_end_date`, `activity_venue`, `location_type`, `expense_registration`, `expense_visa`, `expense_insurance`, `expense_air_fare`, `expense_local_travel`, `expense_da_per_diem`, `expense_boarding_lodging`, `expense_other`, `expense_other_description`, `total_amount`, `sanctioned_amount`, `remarks`, `status`, `hod_status`, `hod_approved_by`, `hod_approved_at`, `hod_comments`, `accounts_status`, `accounts_approved_by`, `accounts_approved_at`, `accounts_comments`, `created_at`, `updated_at`, `balance_applied`) VALUES
+(2, 'CPDA/F5/2025/690a14f2c1de0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'Workshop', 'dsf', '2025-11-28', '2025-11-29', 'asd', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 0.00, 0.00, '', 'ACCOUNTS_REJECTED', 'APPROVED', '1110', '2025-11-04 20:55:19', 'sd', 'REJECTED', '1114', '2025-11-04 20:58:29', 'd', '2025-11-04 15:00:02', '2025-11-04 15:28:29', 0),
+(3, 'CPDA/F5/2025/693bd358c3bbb', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'oiuu', '2025-12-04', '2025-12-10', 'n', 'India', 650.00, 8.00, 45.00, 89.00, 78.00, 21.00, 78.00, 98.00, '', 1067.00, 0.00, '564', 'HOD_APPROVED', 'APPROVED', '1110', '2025-12-12 14:07:20', '98645-+-+', 'PENDING', NULL, NULL, NULL, '2025-12-12 08:33:28', '2025-12-12 08:37:20', 0),
+(4, 'CPDA/F5/2026/697f6984ca639', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'fdz', '2026-02-01', '2026-02-08', 'trfds', 'Abroad', 23.00, 524.00, 543.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 1090.00, 0.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-01 20:26:46', 'xcvb', 'PENDING', '1114', '2026-02-01 20:27:50', 'vnj', '2026-02-01 14:56:04', '2026-02-01 17:18:07', 0),
+(5, 'CPDA/F5/2026/697f91427d5b0', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'nn', '2026-02-01', '2026-02-03', 'nm', 'India', 4555.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 4555.00, 0.00, '', 'HOD_APPROVED', 'APPROVED', '1110', '2026-02-01 23:16:01', ' ', 'PENDING', NULL, NULL, NULL, '2026-02-01 17:45:38', '2026-02-01 17:46:01', 0),
+(6, 'CPDA/F5/2026/6982379b27bee', 1101, 'Dr. Priya Sharma', 'faculty', '13A2', 'Computer Science & Engg.', 'National Conference', 'sfh', '2026-02-01', '2026-02-03', 'delhi', 'India', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 4444.00, '', 4444.00, 0.00, '', 'PENDING', 'PENDING', NULL, NULL, NULL, 'PENDING', NULL, NULL, NULL, '2026-02-03 17:59:55', '2026-02-03 17:59:55', 0);
 
 -- --------------------------------------------------------
 
@@ -1283,13 +1288,13 @@ ALTER TABLE `f4_reimbursement_attachments`
 -- AUTO_INCREMENT for table `f5_attachments`
 --
 ALTER TABLE `f5_attachments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `f5_conference_reimbursements`
 --
 ALTER TABLE `f5_conference_reimbursements`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `fdx_electronic_devices`
